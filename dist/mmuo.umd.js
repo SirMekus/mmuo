@@ -22,6 +22,40 @@
       }
     }
 
+    function lazyLoadImages() {
+      // create config object: rootMargin and threshold
+      // are two properties exposed by the interface
+      var config = {
+        rootMargin: "0px 0px 50px 0px",
+        threshold: 0
+      }; // register the config object with an instance
+      // of intersectionObserver
+
+      var observer = new IntersectionObserver(function (entries, self) {
+        // iterate over each entry
+        entries.forEach(function (entry) {
+          // process just the images that are intersecting.
+          // isIntersecting is a property exposed by the interface
+          if (entry.isIntersecting) {
+            var image = entry.target;
+            image.src = image.dataset.src;
+            image.classList.remove("lazy-load"); // custom function that copies the path to the img
+            // from data-src to src
+            //console.log(entry.target);
+            // the image is now in place, stop watching
+
+            self.unobserve(entry.target);
+          }
+        });
+      }, config);
+      setInterval(function () {
+        document.querySelectorAll("[data-src]").forEach(function (img) {
+          observer.observe(img);
+        });
+      }, 1000);
+    } //******************* BASICALLY FOR GENERATING STRONG KEYS/PASSWORDS
+
+
     var lowerCase = "abcdefghijklmnopqrstuvwxyz";
     var upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     var numbers = "1234567890";
@@ -66,37 +100,37 @@
       var strength = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
       switch (strength) {
-        case "only_letters":
+        case "letters":
           return keyGen(10, true, true, false, false, false);
 
         case "decent_pw":
           return keyGen(10, true, true, true, false, false);
 
-        case "strong_pw":
+        case "strong":
           return keyGen(15, true, true, true, true, false);
 
-        case "ft_knox_pw":
+        case "knox_password":
           return keyGen(30, true, true, true, true, false);
 
-        case "ci_key":
+        case "ci":
           return keyGen(32, true, true, true, false, false);
 
-        case "160_wpa":
+        case "type_160":
           return keyGen(20, true, true, true, true, false);
 
-        case "504_wpa":
+        case "type_504":
           return keyGen(63, true, true, true, true, false);
 
-        case "64_wep":
+        case "type_64":
           return keyGen(5, false, false, false, false, true);
 
-        case "128_wep":
+        case "type_128":
           return keyGen(13, false, false, false, false, true);
 
-        case "152_wep":
+        case "type_152":
           return keyGen(16, false, false, false, false, true);
 
-        case "256_wep":
+        case "type_256":
           return keyGen(29, false, false, false, false, true);
 
         default:
@@ -333,10 +367,12 @@
     }
 
     function generatePassword(event) {
+      var _clicked_buton$datase, _clicked_buton$datase2;
+
       event.preventDefault();
       var clicked_buton = event.currentTarget;
-      var target = clicked_buton.dataset.target;
-      var strength = clicked_buton.dataset.strength;
+      var target = (_clicked_buton$datase = clicked_buton.dataset.target) !== null && _clicked_buton$datase !== void 0 ? _clicked_buton$datase : "password";
+      var strength = (_clicked_buton$datase2 = clicked_buton.dataset.strength) !== null && _clicked_buton$datase2 !== void 0 ? _clicked_buton$datase2 : "decent_pw";
       var passPhrase = getKey(strength);
       var id = document.querySelector("#" + target);
       document.querySelector("#" + target).value = passPhrase;
@@ -382,12 +418,17 @@
       var href = clickedLink.getAttribute("href");
 
       if (!href || href == "#") {
+        document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, {
+          detail: null
+        }));
         removeSpinner();
         return;
       }
 
       axios.get(href).then(function (response) {
-        eventBus.emit(clickedLink.dataset.bc, response);
+        document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, {
+          detail: response
+        }));
       }).catch(function (error) {
         showCanvass("<div class='text-danger'>" + error.response.data.message + "</div>");
       }).then(function () {
@@ -464,6 +505,12 @@
           var _ref;
 
           responseArea.innerHTML = "<span class='text-success'>".concat((_ref = response.data.msg || response.data.message) !== null && _ref !== void 0 ? _ref : response.data, "</span>");
+        }
+
+        if (this_form.dataset.bc) {
+          document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, {
+            detail: response
+          }));
         }
       }).catch(function (error) {
         var _error$response$data$2, _ref2;
@@ -590,9 +637,14 @@
     exports.checkIfPasswordsMatch = checkIfPasswordsMatch;
     exports.generatePassword = generatePassword;
     exports.getRequest = getRequest;
+    exports.lazyLoadImages = lazyLoadImages;
     exports.on = on;
     exports.postRequest = postRequest;
     exports.registerEventListeners = registerEventListeners;
+    exports.removeSpinner = removeSpinner;
+    exports.showAlert = showAlert;
+    exports.showCanvass = showCanvass;
+    exports.showSpinner = showSpinner;
     exports.togglePasswordVisibility = togglePasswordVisibility;
 
     Object.defineProperty(exports, '__esModule', { value: true });
