@@ -1,14 +1,15 @@
 # Mmuo
 
-Mmuo is a Javascript library for making AJAX requests, alternative to native browser `alert()` function, image/file upload and many other 'utility' features that will/can be added at interval basis (or in the future) - This is why it is called **Mmuo** (spirit in Igbo language) because you won't see it coming.
+Mmuo is a Javascript library for making AJAX requests, alternative to native browser `alert()` function, image/file upload and many other 'utility' features that will/can be added at interval basis (or in the future) - This is why it is called **Mmuo** (the Igbo Language name of "spirit" in English language) because you won't see it coming.
 
-The package does the following at the moment (but can always be extended to include more features in the future):
+Especially for AJAX requests, you don't have to create AJAX scripts/files for different/specific pages anymore. This single package can take care of any AJAX request for you (as well as the following listed below). The package does the following at the moment (but can always be extended to include more features in the future):
 
 - Image Preview/Upload
 - Replacement of native browser's `alert()` function
 - Performing AJAX **GET** requests
 - Performing AJAX **POST** requests
 - Exposes some AJAX loading indicator functions which you can use for your project
+- Lazy-load Image(s)
 
 ## Installation
 
@@ -29,7 +30,7 @@ window.addEventListener("DOMContentLoaded", function() {
 });
 ```
 
-Please note that in using this function some classes and/or ID's have already been defined and registered so all you have to do is assign any of these classes or ID's to your element and you're good to go:
+Please note that in using this function some classes and/or ID's have already been defined and registered so all you have to do is assign any of these classes or ID's to your element and you're good to go. The functions are already defined and you can use them on your own if you want to create or listen to custom events on your own. The workflow, should you choose to register events on your own with a different class/ID name, should be the same:
 
 | Class/ID | Event | Function | Description
 | ----------- | ----------- | ----------- | ----------- |
@@ -51,7 +52,7 @@ All the above functions can simply be imported and used in your project.
 
 # Registering Events
 
-To register an event, all you have to do is import the `on` function like so:
+This works like Jquery's DOM event listener. To register an event, all you have to do is import the `on` function like so:
 
 ```
 import {on} from "mmuo"
@@ -90,7 +91,17 @@ window.addEventListener("DOMContentLoaded", function() {
 });
 ```
 
-If you will like to use our function(s) (as defined in the table above) then you should not forget to import the particular function(s) as well.
+or
+
+```
+window.addEventListener("DOMContentLoaded", function() {
+    on('.selectorOne .selector2', 'click', function(event){
+        //Do whatever you wish
+    });
+});
+```
+
+If you will like to use our function(s) (as defined in the table above) then you should not forget to import the particular function(s) as well. You can add as many selectors you like to listen to the same event.
 
 # Examples
 Please note that the class names specified here are optional and you are free to use your own class names. The difference is that you will have to register your events yourself using any of our functions defined in the table above.
@@ -103,14 +114,14 @@ Please note that the class names specified here are optional and you are free to
 </div>
 
 <div>
-<!-- Notice where the "data-targetClass=*" points to-->
+<!-- Notice where the "data-targetClass=*" points to. This button will trigger the user to select file from browser -->
     <a href="#" data-targetClass="image" class="select-photo">
         <i class="fas fa-plus-circle fa-sm"></i>
     </a>
 </div>
 
 <form enctype="multipart/form-data" action="#" method="post">
-    <!-- Notice where the "data-preview=*" attribute points to-->
+    <!-- Notice where the "data-preview=*" attribute points to - the div where the selected image will be displayed -->
     <input style="display:none;" type="file" class="image"
     data-preview="preview-upload" accept="image/*" />
 
@@ -121,6 +132,7 @@ Please note that the class names specified here are optional and you are free to
 ```
 
 - ## Via Normal File Input:
+
 ```
 <div class="preview-upload">
 <!-- The selected photo will be displayed here. This is always very important-->
@@ -137,11 +149,14 @@ Please note that the class names specified here are optional and you are free to
 </form>
 ```
 
-2. ## Password Visibility:
+2. ## Password Toogling:
+Toggle between showing and hiding a password.
+
 ```
 <div>
     <label>Password</label>
     <input type="password" class="password-checker" id="password">
+
     <!-- data-id=* points to the ID of the password input we want to toggle-->
     <a class="password-visibility" data-id='password' href="#">
         <i class="fas fa-eye-slash "></i>
@@ -150,13 +165,13 @@ Please note that the class names specified here are optional and you are free to
 ```
 
 3. ## Checking If Two Passwords Match:
-Just make sure they have the `name` attributes set to **"password"** and **"password_confirmation"** respectively alongside the **"password-checker"** class name
+Just make sure they (inputs) have the `name` attributes set to **"password"** and **"password_confirmation"** respectively alongside the **"password-checker"** class name
 ```
 <div>
     <label>Create Password</label>
     <input type="password" class="password-checker" name="password">
 
-    <!-- This can be placed anywhere on the page (but with this particular class name). The goal is to alert the user if the passwords don't match-->
+    <!-- This can be placed anywhere on the page (but with this particular class name (password-checker-notification)). The goal is to display message to the user if the passwords don't match-->
     <span class="password-checker-notification"></span>
 </div>
 
@@ -169,8 +184,9 @@ Just make sure they have the `name` attributes set to **"password"** and **"pass
 4. ## Generating Password:
 ```
 <div>
-    <label>Enter Password<span style="color:red;">*</span></label>
+    <label>Enter Password</label>
     <input type="password" data-name="second password" id="password"/>
+    
     <button data-strength="decent_pw" data-target="password" class="gen-password">
         <!-- The font below is optional and just for visuals-->
         <i class="fas fa-key"></i>
@@ -186,6 +202,7 @@ Or, if you have double password fields (like in a password confirmation settings
 
     <label>Re-enter Password</label>
     <input type="password" data-name="second password" id="password2"/>
+
     <button data-strength="decent_pw" data-target="password" class="gen-password">
         <!-- The font below is optional and just for visuals-->
         <i class="fas fa-key"></i>
@@ -259,7 +276,7 @@ We advice that each input type be placed within a `div` for proper styling and a
         <input type="password" name='password'>
     </div>
     
-    <div class="form-group mt-3">
+    <div>
         <input class="btn btn-home btn-lg w-100" type="submit" value="Log In" />
     </div>
 </form>
@@ -273,19 +290,99 @@ And for **Laravel users**, it is also important that no element with similar ID 
 
 When returning response from server (which will usually come in a JSON format) **Mmmuo** will try to detect if it has a **"message"** or **"msg"** property and then display it as successful (or failure) message to the user else it falls to default and just displays whatever was sent to the client.
 
-If you want a redirect to take place on successful request then you should pass the URL/link you wwant the user to be directed to (as response) by adding a `url` property to the response. 
+If you want a redirect to take place on successful request then you should pass the URL/link you want the user to be directed to (as response) by adding a `url` property to the response. A typical response may look like:
 
-If you want the link to be opened on a different tab then you should add a `data-ext` attribute to your form tag (with any value; it doesn't matter here).
+```
+{
+  "message": "Request was successful",
+  "url": "https://www.webloit.com"
+}
+```
 
-For proper styling and presentation we use the **HTTP status** to detect error or failed request(s) so when returning response(s) we advice you use appropriate **HTTP status code(s)**. No need to append the "Status Code" as property in the result in the reward because we don't use it.
+If you want the link to be opened on a different tab then you should add a `data-ext` attribute to your form tag (with any value; it doesn't matter here). Example:
+
+```
+<form action="submit" id="form" method="post" data-ext='true'>
+
+//
+
+</form>
+
+```
+
+For proper styling and presentation we use the **HTTP status** to detect error or failed request(s) so when returning response(s) we advice you use appropriate **HTTP status header(s)**. No need to append the "Status Code" as property in the result in the reward because we don't use it.
 
 ---
 
 # BONUS:
 ## Emitting Events:
-For either GET or POST requests you may want to perform some other actions as well when the request is successful. You can simply do this by adding a `data-bc=*` attribute to either the `a` element or `form` tag with the name of the event you want to emit as value. We will then emit this event when the request is successful which you can listen to in your project. We'll pass across any data received from the server as parameter in the emitted event as well so you can inspect and do whatever you wish with it. [title](https://www.example.com)
+For either GET or POST requests you may want to perform some other actions as well when the request is successful. You can simply do this by adding a `data-bc=*` attribute to either the `a` element or `form` tag with the name of the event you want to emit as value. We will then emit this event when the request is successful which you can listen to in your project. We'll pass across any data received from the server as parameter in the emitted event as well so you can inspect and do whatever you wish with it. 
 
 ---
+
+# Utility Functions
+## Displaying Spinner:
+You may want to indicate to user that an action is taking place. You can import and use our `showSpinner` function for this. E.g
+
+```
+import {showSpinner, removeSpinner} from "mmuo"
+
+showSpinner()
+axios.get("http://www.example.com").then((response) => {
+        //success
+    }).catch((error) => {
+        //nsogbu (request failure)
+    }).then(() => {
+        removeSpinner()
+    })
+```
+
+To give your spinner a theme color you should define a CSS `--color-theme` variable in your project
+
+## Displaying Pop Up (or Alert)
+
+This is typically used to warn or instruct a user after clicking a link before carrying the action of the link (consider it a replacement to browser's `alert()`). Simply use our `showAlert` function like so:
+
+```
+import {showAlert} from "mmuo"
+
+showAlert(caption, link, textWord, classToUse=null, bc=null)
+
+//String: caption => The caption or instruction that will be displayed to the user
+//String: link => The link which the user can click to continue [default] action
+//String: textWord = What text the link ('a' element) will have
+//String: classToUse (optional): What class(es) should be added to the link tag/element
+//bc => What event should be generated when user clicks the link. This is typically used if using any of our AJAX function.
+```
+
+## Lazy-loading Images
+If you have to display multiple images on your page it may take time and consume bandwith of user downloading all the images at once. We can save time and increase page load (and speed) by only downloading image(s) when it/they is/are within view. To do this, instead of giving an `src` attribute to your image, give it a `data-src` attribute with the url of the image and the image will be displayed only when into view. For example:
+```
+#HTML
+<img data-src="/link/to/image.jpg" />
+
+#Javascript
+import {lazyLoadImages} from "mmuo"
+
+//You will usually want to do this when the DOM is fully loaded
+window.addEventListener("DOMContentLoaded", function() {
+    lazyLoadImages()
+});
+```
+
+## Popup From Bottom-To-Top
+
+You may want to display a message to the user after/before an action and will like it to appear from below the user's screen, simply do:
+```
+import {showCanvass} from "mmuo"
+
+//You will usually want to do this when the DOM is fully loaded
+window.addEventListener("DOMContentLoaded", function() {
+    //Pass your message across as argument
+    showCanvass(message)
+});
+```
+
 
 # Meanwhile
  You can connect with me on [LinkedIn](https://www.linkedin.com/in/sirmekus) for insightful tips and so we can grow our networks together.
@@ -293,3 +390,5 @@ For either GET or POST requests you may want to perform some other actions as we
  Patronise us on [Webloit](https://www.webloit.com).
 
  And follow me on [Twitter](https://www.twitter.com/Sire_Mekus).
+
+ I encourage contribution even if it's in the documentation. Thank you.
