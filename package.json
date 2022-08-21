@@ -1,0 +1,31 @@
+{
+  "name": "mmuo",
+  "version": "1.0.0",
+  "description": "A javascript library for making AJAX requests, alternative to native browser \"alert()\" function, lady-loading images, for image/file upload and many other utility features",
+  "main": "dist/mmuo.cjs.js",
+  "module": "dist/mmuo.esm.js",
+  "browser": "dist/mmuo.umd.js",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "npm run build"
+  },
+  "keywords": ["laravel", "vue", "ajax", "mmuo", "vuelar", "sirmekus"],
+  "author": "Emeka Ohakwe <SirMekus; Uncle E> (https://www.linkedin.com/in/sirmekus)",
+  "license": "MIT",
+  "peerDependencies": {
+    "axios": "^0.25.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "rollup": "^2.78.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}
