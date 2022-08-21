@@ -277,7 +277,7 @@ We advice that each input type be placed within a `div` for proper styling and a
     </div>
     
     <div>
-        <input class="btn btn-home btn-lg w-100" type="submit" value="Log In" />
+        <input type="submit" value="Log In" />
     </div>
 </form>
 ```
