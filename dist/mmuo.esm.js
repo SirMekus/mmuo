@@ -419,7 +419,13 @@ function getRequest(event) {
     return;
   }
 
-  axios.get(href).then(function (response) {
+  axios.request({
+    url: href,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    withCredentials: true
+  }).then(function (response) {
     document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, {
       detail: response
     }));
@@ -473,8 +479,8 @@ function postRequest(event) {
   }
 
   var sub_value = submit_button.value;
-  var action = this_form.getAttribute("action"); //var method = this_form.getAttribute('method')
-
+  var action = this_form.getAttribute("action");
+  var method = this_form.getAttribute('method');
   var data_to_send = new FormData(this_form);
 
   if (this_form.querySelector("div.upload-progress-div") == null) {
@@ -486,7 +492,15 @@ function postRequest(event) {
 
   submit_button.value = "...in progress";
   submit_button.setAttribute("disabled", "disabled");
-  axios.post(action, data_to_send).then(function (response) {
+  axios.request({
+    url: action,
+    method: method,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    },
+    data: data_to_send,
+    withCredentials: true
+  }).then(function (response) {
     removeElement(this_form, ".server-response");
 
     if (response.data.url) {
@@ -522,29 +536,30 @@ function postRequest(event) {
 
         if (items != undefined) {
           for (var item in items) {
-            //This may be an element that is dynamically added to the form field, thus may not be always present in the DOM
+            //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
             if (this_form.querySelector("[name='".concat(item, "']")) == null) {
               continue;
             }
 
             var sibling = this_form.querySelector("[name='".concat(item, "']")).nextElementSibling;
+            var id = "".concat(item, "_mmuo");
 
             if (sibling == null) {
               //Then we need to create it
               var element = document.createElement("div");
-              element.id = item;
+              element.id = id;
               element.className = "server-response text-danger";
               insertAfter(element, this_form.querySelector("[name='".concat(item, "']")));
             } else {
-              if (sibling.id != item) {
+              if (sibling.id != id) {
                 var element = document.createElement("div");
-                element.id = item;
+                element.id = id;
                 element.className = "server-response text-danger";
                 insertAfter(element, sibling);
               }
             }
 
-            var responseForElement = this_form.querySelector("#".concat(item));
+            var responseForElement = this_form.querySelector("#".concat(id));
             responseForElement.innerHTML = items[item][0];
           }
 
@@ -554,10 +569,45 @@ function postRequest(event) {
             responseArea.innerHTML = "<span class='server-response text-danger'>".concat(error.response.data.message, "</span>");
           }
         } else {
-          var _error$response$data$;
+          var _error$response$data, _error$response$data$, _error$response$data2, _error$response$data3, _error$response$data4;
 
-          var msg = (_error$response$data$ = error.response.data.message) !== null && _error$response$data$ !== void 0 ? _error$response$data$ : error.response.data;
+          if ((_error$response$data = error.response.data) !== null && _error$response$data !== void 0 && (_error$response$data$ = _error$response$data.message) !== null && _error$response$data$ !== void 0 && _error$response$data$.message) {
+            var msg = error.response.data.message.message;
+          } else if ((_error$response$data2 = error.response.data) !== null && _error$response$data2 !== void 0 && _error$response$data2.message) {
+            var msg = error.response.data.message;
+          } else {
+            var msg = error.response.data;
+          }
+
           responseArea.innerHTML = "<span class='server-response text-danger'>" + msg + "</span>";
+
+          if ((_error$response$data3 = error.response.data) !== null && _error$response$data3 !== void 0 && (_error$response$data4 = _error$response$data3.message) !== null && _error$response$data4 !== void 0 && _error$response$data4.target) {
+            var inputName = error.response.data.message.target; //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
+
+            if (this_form.querySelector("[name='".concat(inputName, "']")) != null) {
+              var sibling = this_form.querySelector("[name='".concat(inputName, "']")).nextElementSibling;
+
+              var _id = "".concat(inputName, "_mmuo");
+
+              if (sibling == null) {
+                //Then we need to create it
+                var element = document.createElement("div");
+                element.id = _id;
+                element.className = "server-response text-danger";
+                insertAfter(element, this_form.querySelector("[name='".concat(inputName, "']")));
+              } else {
+                if (sibling.id != _id) {
+                  var element = document.createElement("div");
+                  element.id = _id;
+                  element.className = "server-response text-danger";
+                  insertAfter(element, sibling);
+                }
+              }
+
+              var responseForElement = this_form.querySelector("#".concat(_id));
+              responseForElement.innerHTML = msg;
+            }
+          }
         }
 
         break;

@@ -129,8 +129,12 @@ function getRequest (event) {
 
         return
     }
-    
-    axios.get(href).then((response) => {
+
+    axios.request({
+        url: href,
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        withCredentials: true
+      }).then((response) => {
         document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, { detail: response }))
     }).catch((error) => {
         showCanvass("<div class='text-danger'>"+error.response.data.message +"</div>")
@@ -202,7 +206,7 @@ function postRequest (event) {
 
     var action = this_form.getAttribute("action");
 
-    //var method = this_form.getAttribute('method')
+    var method = this_form.getAttribute('method')
 
     var data_to_send = new FormData(this_form);
 
@@ -217,10 +221,17 @@ function postRequest (event) {
     }
 
     submit_button.value = "...in progress";
-    submit_button.setAttribute("disabled", "disabled");
+    submit_button.setAttribute("disabled", "disabled")
+
 
     axios
-        .post(action, data_to_send)
+        .request({
+            url: action,
+            method,
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            data: data_to_send,
+            withCredentials: true
+          })
         .then((response) => {
             removeElement(this_form, ".server-response");
             
@@ -253,29 +264,32 @@ function postRequest (event) {
                     var items = error.response.data.errors;
                     if (items != undefined) {
                         for (var item in items) {
-                            //This may be an element that is dynamically added to the form field, thus may not be always present in the DOM
+                            //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
                             if (this_form.querySelector(`[name='${item}']`) == null) {
                                 continue;
                             }
 
                             var sibling = this_form.querySelector(`[name='${item}']`).nextElementSibling;
+
+                            const id = `${item}_mmuo`;
+
                             if (sibling == null) {
                                 //Then we need to create it
                                 var element = document.createElement("div");
-                                element.id = item;
+                                element.id = id
                                 element.className = "server-response text-danger";
                                 insertAfter(element, this_form.querySelector(`[name='${item}']`));
                             } else {
-                                if (sibling.id != item) {
+                                if (sibling.id != id) {
                                     var element = document.createElement("div");
-                                    element.id = item;
+                                    element.id = id;
                                     element.className = "server-response text-danger";
                                     insertAfter(element, sibling);
                                 }
                             }
 
                             var responseForElement =
-                                this_form.querySelector(`#${item}`);
+                                this_form.querySelector(`#${id}`);
                             responseForElement.innerHTML = items[item][0];
                         }
 
@@ -285,13 +299,51 @@ function postRequest (event) {
                         } else {
                             responseArea.innerHTML = `<span class='server-response text-danger'>${error.response.data.message}</span>`;
                         }
-                    } 
+                    }
                     else {
-                        const msg = error.response.data.message ?? error.response.data;
+                        if (error.response.data?.message?.message) {
+                            var msg = error.response.data.message.message;
+                        } else if (error.response.data?.message) {
+                            var msg = error.response.data.message;
+                        } else {
+                            var msg = error.response.data;
+                        }
+                        
                         responseArea.innerHTML =
                             "<span class='server-response text-danger'>" +
                             msg +
                             "</span>";
+
+                        if(error.response.data?.message?.target){
+                            const inputName = error.response.data.message.target
+
+                            //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
+                            if (this_form.querySelector(`[name='${inputName}']`) != null) {
+                                var sibling = this_form.querySelector(`[name='${inputName}']`).nextElementSibling;
+
+                                const id = `${inputName}_mmuo`;
+
+                                if (sibling == null) {
+                                    //Then we need to create it
+                                    var element = document.createElement("div");
+                                    element.id = id
+                                    element.className = "server-response text-danger";
+                                    insertAfter(element, this_form.querySelector(`[name='${inputName}']`));
+                                } 
+                                else {
+                                    if (sibling.id != id) {
+                                        var element = document.createElement("div");
+                                        element.id = id;
+                                        element.className = "server-response text-danger";
+                                        insertAfter(element, sibling);
+                                    }
+                                }
+
+                                var responseForElement = this_form.querySelector(`#${id}`);
+                                
+                                responseForElement.innerHTML = msg;
+                            }
+                        }
                     }
 
                     break;

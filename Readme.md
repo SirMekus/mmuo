@@ -1,6 +1,6 @@
 # Mmuo
 
-Mmuo is a Javascript library for making AJAX requests, alternative to native browser `alert()` function, image/file upload and many other 'utility' features that will/can be added at interval basis (or in the future) - This is why it is called **Mmuo** (the Igbo Language name of "spirit" in English language) because you won't see it coming.
+Mmuo is a Javascript library for making AJAX requests, alternative to native browser `alert()` function, image/file upload and many other 'utility' features that will/can be added at interval basis (or in the future) - This is why it is called **Mmuo** (the Igbo Language name of "spirit"); because you won't see it coming.
 
 Especially for AJAX requests, you don't have to create AJAX scripts/files for different/specific pages anymore. This single package can take care of any AJAX request for you (as well as the following listed below). The package does the following at the moment (but can always be extended to include more features in the future):
 
@@ -15,19 +15,31 @@ Especially for AJAX requests, you don't have to create AJAX scripts/files for di
 
 To get started all you need to do is:
 
-```
+```bash
 $ npm install mmuo
 ```
 
 and you're in. The package exposes a `registerEventListeners()` function which already has some event listeners and classes for you to just dive right in and use. Simply import the function into your project and use right away. Example:
 
-```
+```javascript
 import {registerEventListeners} from "mmuo"
 
 //Always nice to register events when the DOM has been fully loaded
 window.addEventListener("DOMContentLoaded", function() {
     registerEventListeners()
 });
+```
+
+Or, if you prefer to link via `<script>` in HTML, especially if you don't use a bundler, then prefix the function(s) with **"`mmuo`"**:
+
+```javascript
+<script src="/path_to_node_module_or_installation_directory/mmuo/dist/mmuo.umd.js"></script>   
+
+<script>
+    window.addEventListener("DOMContentLoaded", function() {
+        mmuo.registerEventListeners()
+    });
+</script>
 ```
 
 Please note that in using this function some classes and/or ID's have already been defined and registered so all you have to do is assign any of these classes or ID's to your element and you're good to go. The functions are already defined and you can use them on your own if you want to create or listen to custom events on your own. The workflow, should you choose to register events on your own with a different class/ID name, should be the same:
@@ -40,21 +52,20 @@ Please note that in using this function some classes and/or ID's have already be
 |.password-visibility | click | `togglePasswordVisibility` | This should be an `a` element nested within a `div` element which is a sibling to an `input` element. It optionally has a `data-id='password'` attribute with a value that points to the password input element you'll like to toggle. You can add more graphic quality by adding a `<i class="fas fa-eye-slash "></i>` within the `a` tag to as visual representation of the toggling.
 | .password-checker | focusout | `checkIfPasswordsMatch` | This uses the `name` attribute for its operation and assumes that two `input` with **name** attribute values of **password** and **password_confirmation** respectively exists.These two input elements should have the this class in them. Also you should create or specify an element with `.password-checker-notification` class where the result of this confirmation will be displayed. By default this will only be displayed if the passwords don't match.
 |.gen-password | click | `generatePassword` | Generates password depending on the configuration/type (specified in the data-attribute which will be shown with an example below) and displays the result in a typically `input` tag you may optionally specify via `data-target="password"` (where **password** is the name of the id. If you want it, like in a **password_confirmation** setting to also write this generated password in another input tag then that input element should have the same id suffixed with a **"2"**. E.g, `id="password2"`). If an element `.password-visibility` class is present it'll be automatically triggered.
-|.pre-run | click | `alertBeforeRunning` | This replaces the native `alert()` function for something more appealing and friendly. It accepts optional `data-attribute=*` such as: `data-caption=*` if you want a different caption to be displayed to the user. For instance, **"Do you truly want to log out?"**; `data-classname=*` if you want a particular **class** to be added to the link that processes the request (should the user decide to proceed). This could be a class that makes an AJAX request in the background like our `.run-get-request` (which we'll learn of next). 
+|.pre-run | click | `alertBeforeRunning` | This replaces the native `alert()` function for something more appealing and friendly. It accepts optional `data-attribute=*` such as: `data-caption=*` if you want a different caption to be displayed to the user. For instance, **"Do you truly want to log out?"**; `data-classname=*` if you want a particular **class** to be added to the link that processes the request (should the user decide to proceed). This could be a class that makes an AJAX request in the background like our `.run-get-request` (which we'll learn of next).
 |.run-get-request | click | `getRequest` | Performs an AJAX GET request. If you will like to do something with the result of the request, like a redirection, etc, you can add a `data-bc="[event_name]"` attribute to the request with any value. A `[event_name]` event will be emitted on successful request with any data from server passed to the event which you should then listen to on your own and do whatever you wish with the response or result.
 |#form (or .form) | click | `postRequest` | Performs an AJAX POST request. It submits everything in the form. This should be used on a HTML form. You don't have to do anything at all. However, this works best with Laravel (PHP) as some response structures/patterns have been coded in it already.
 
 All the above functions can simply be imported and used in your project.
 
 > Note that these are just class/ID names you can use on the fly without any configuration and that these names, if they conflict with any class/ID name already in use, can be changed to your preference. However, you will have to manually register your events
-
 > Also note that proper styling is done with Bootstrap so you may want to include it in your project
 
-# Registering Events
+## Registering Events
 
 This works like Jquery's DOM event listener. To register an event, all you have to do is import the `on` function like so:
 
-```
+```javascript
 import {on} from "mmuo"
 
 //Always nice to register events when the DOM has been fully loaded
@@ -66,8 +77,10 @@ window.addEventListener("DOMContentLoaded", function() {
     //functionToRun => The function you want to run as event listener
 });
 ```
+
 You can register a single event on multiple selectors or elements by separating each selector or element with spacing. E.g,
-```
+
+```javascript
 window.addEventListener("DOMContentLoaded", function() {
     on('.selectorOne', 'click', myFunctionOrYourFunctionToRun);
 });
@@ -75,7 +88,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
 or
 
-```
+```javascript
 window.addEventListener("DOMContentLoaded", function() {
     on('.selectorOne #selector2', 'click', myFunctionOrYourFunctionToRun);
 });
@@ -83,7 +96,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
 or
 
-```
+```javascript
 window.addEventListener("DOMContentLoaded", function() {
     on('.selectorOne #selector2', 'click', function(event){
         //Do whatever you wish
@@ -93,7 +106,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
 or
 
-```
+```javascript
 window.addEventListener("DOMContentLoaded", function() {
     on('.selectorOne .selector2', 'click', function(event){
         //Do whatever you wish
@@ -103,12 +116,15 @@ window.addEventListener("DOMContentLoaded", function() {
 
 If you will like to use our function(s) (as defined in the table above) then you should not forget to import the particular function(s) as well. You can add as many selectors you like to listen to the same event.
 
-# Examples
+## Examples
+
 Please note that the class names specified here are optional and you are free to use your own class names. The difference is that you will have to register your events yourself using any of our functions defined in the table above.
 
 1. ## Image Upload
-- ## Via Trigger:
-```
+
+- ## Via Trigger
+
+```javascript
 <div class="preview-upload">
 <!-- The selected photo will be displayed here-->
 </div>
@@ -131,9 +147,9 @@ Please note that the class names specified here are optional and you are free to
 </form>
 ```
 
-- ## Via Normal File Input:
+- ## Via Normal File Input
 
-```
+```javascript
 <div class="preview-upload">
 <!-- The selected photo will be displayed here. This is always very important-->
 </div>
@@ -149,10 +165,11 @@ Please note that the class names specified here are optional and you are free to
 </form>
 ```
 
-2. ## Password Toogling:
+2. ## Password Toogling
+
 Toggle between showing and hiding a password.
 
-```
+```javascript
 <div>
     <label>Password</label>
     <input type="password" class="password-checker" id="password">
@@ -164,9 +181,11 @@ Toggle between showing and hiding a password.
 </div>
 ```
 
-3. ## Checking If Two Passwords Match:
+3. ## Checking If Two Passwords Match
+
 Just make sure they (inputs) have the `name` attributes set to **"password"** and **"password_confirmation"** respectively alongside the **"password-checker"** class name
-```
+
+```html
 <div>
     <label>Create Password</label>
     <input type="password" class="password-checker" name="password">
@@ -181,8 +200,9 @@ Just make sure they (inputs) have the `name` attributes set to **"password"** an
 </div>
 ```
 
-4. ## Generating Password:
-```
+4. ## Generating Password
+
+```html
 <div>
     <label>Enter Password</label>
     <input type="password" data-name="second password" id="password"/>
@@ -195,7 +215,8 @@ Just make sure they (inputs) have the `name` attributes set to **"password"** an
 ```
 
 Or, if you have double password fields (like in a password confirmation settings), the second field should have the same ID but end with a **"2"**:
-```
+
+```html
 <div>
     <label>Enter Password</label>
     <input type="password" data-name="second password" id="password"/>
@@ -209,6 +230,7 @@ Or, if you have double password fields (like in a password confirmation settings
     </button>
 </div>
 ```
+
 The `data-strength=*` attribute can have any of the following values:
 - decent_pw
 - strong
@@ -324,7 +346,7 @@ For either GET or POST requests you may want to perform some other actions as we
 ## Displaying Spinner:
 You may want to indicate to user that an action is taking place. You can import and use our `showSpinner` function for this. E.g
 
-```
+```javascript
 import {showSpinner, removeSpinner} from "mmuo"
 
 showSpinner()
@@ -343,25 +365,27 @@ To give your spinner a theme color you should define a CSS `--color-theme` varia
 
 This is typically used to warn or instruct a user after clicking a link before carrying the action of the link (consider it a replacement to browser's `alert()`). Simply use our `showAlert` function like so:
 
-```
+```javascript
 import {showAlert} from "mmuo"
 
 showAlert(caption, link, textWord, classToUse=null, bc=null)
 
-//String: caption => The caption or instruction that will be displayed to the user
+//String: caption => The caption or instruction that should be displayed to the user
 //String: link => The link which the user can click to continue [default] action
-//String: textWord = What text the link ('a' element) will have
+//String: textWord = What text the link ('a' element) should have
 //String: classToUse (optional): What class(es) should be added to the link tag/element
 //bc => What event should be generated when user clicks the link. This is typically used if using any of our AJAX function.
 ```
 
 ## Lazy-loading Images
-If you have to display multiple images on your page it may take time and consume bandwith of user downloading all the images at once. We can save time and increase page load (and speed) by only downloading image(s) when it/they is/are within view. To do this, instead of giving an `src` attribute to your image, give it a `data-src` attribute with the url of the image and the image will be displayed only when into view. For example:
-```
-#HTML
-<img data-src="/link/to/image.jpg" />
 
-#Javascript
+If you have to display multiple images on your page it may take time and consume bandwith of user downloading all the images at once. We can save time and increase page load (and speed) by only downloading image(s) when it/they is/are within view. To do this, instead of giving an `src` attribute to your image, give it a `data-src` attribute with the url of the image and the image will be displayed only when into view. For example:
+
+```HTML
+<img data-src="/link/to/image.jpg" />
+```
+
+```javascript
 import {lazyLoadImages} from "mmuo"
 
 //You will usually want to do this when the DOM is fully loaded
@@ -373,7 +397,8 @@ window.addEventListener("DOMContentLoaded", function() {
 ## Popup From Bottom-To-Top
 
 You may want to display a message to the user after/before an action and will like it to appear from below the user's screen, simply do:
-```
+
+```javascript
 import {showCanvass} from "mmuo"
 
 //You will usually want to do this when the DOM is fully loaded
