@@ -31,7 +31,6 @@ function lazyLoadImages() {
                 image.classList.remove("lazy-load");
                 // custom function that copies the path to the img
                 // from data-src to src
-                //console.log(entry.target);
                 // the image is now in place, stop watching
                 self.unobserve(entry.target);
             }

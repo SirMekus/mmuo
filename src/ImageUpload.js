@@ -81,7 +81,6 @@ function uploadImage(e) {
     if (document.getElementById("previously_uploaded") != null) {
         const dt = new DataTransfer();
         const { files } = document.getElementById("previously_uploaded");
-        console.log(files)
         for (var i = 0; i < files.length; i++) {
             const merged_file = files[i];
             dt.items.add(merged_file);
@@ -112,7 +111,6 @@ function removeImage(event) {
     var currentButton = event.currentTarget
 
     var index = currentButton.dataset.entry
-console.log(`index is ${index}`)
 	const dt = new DataTransfer()
     
 	const input = document.querySelector('.image')
@@ -131,8 +129,6 @@ console.log(`index is ${index}`)
 
     document.querySelectorAll(".remove-image").forEach(function(currentValue, currentIndex, listObj) {
         listObj[currentIndex].setAttribute('data-entry', currentIndex)
-        console.log(currentValue + ', ' + currentIndex + ', ' + this);
-        console.log(listObj)
     })
 }
 
@@ -152,14 +148,11 @@ function removePhoto(index)
 
     document.querySelectorAll(".remove-image").forEach(function(currentValue, currentIndex, listObj) {
         listObj[currentIndex].setAttribute('data-entry', currentIndex)
-        console.log(currentValue + ', ' + currentIndex + ', ' + this);
-        console.log(listObj)
     })
 
 	var found = $(document).find('.remove-image').length - 1;
 
 	$(document).find('.remove-image').each(function (k) {
-			    console.log("k is: "+ (found - k))
 			    $(this).attr('data-entry', found - k)
 		    })
 	}

@@ -126,7 +126,7 @@ Please note that the class names specified here are optional and you are free to
 
 ```javascript
 <div class="preview-upload">
-<!-- The selected photo will be displayed here-->
+<!-- The selected photo will be displayed here -->
 </div>
 
 <div>
@@ -165,6 +165,14 @@ Please note that the class names specified here are optional and you are free to
 </form>
 ```
 
+You can control the size of the image (so it doesn't display too large or occupy your screen) by styling the `div` or container where the image will be displayed. If you come from a Bootstrap CSS framework background you can simply give it the `d-flex` class (and can center the `div` as well with appropriate styling or Bootsrap class). Example:
+
+```html
+<div class='preview-upload d-flex'>
+
+</div>
+```
+
 2. ## Password Toogling
 
 Toggle between showing and hiding a password.
@@ -181,7 +189,7 @@ Toggle between showing and hiding a password.
 </div>
 ```
 
-3. ## Checking If Two Passwords Match
+3. ## Check If Two Passwords Match
 
 Just make sure they (inputs) have the `name` attributes set to **"password"** and **"password_confirmation"** respectively alongside the **"password-checker"** class name
 
@@ -201,6 +209,8 @@ Just make sure they (inputs) have the `name` attributes set to **"password"** an
 ```
 
 4. ## Generating Password
+
+Give the button a `gen-password` class. Example:
 
 ```html
 <div>
@@ -232,6 +242,7 @@ Or, if you have double password fields (like in a password confirmation settings
 ```
 
 The `data-strength=*` attribute can have any of the following values:
+
 - decent_pw
 - strong
 - stronger
@@ -248,7 +259,7 @@ If not specified, or an invalid value is used, the default is **decent_pw**
 
 5. ## Ask Before Running A Link
 
-```
+```html
 <a class="pre-run" data-caption="Would you like to buy me Shawama or Nkwobi as well?" data-classname="run-get-request" data-bc="logout" href="https://www.webloit.com">Shop Now</a>
 ```
 
@@ -256,35 +267,47 @@ The **"pre-run"** (but you can give it a different name) class is the most impor
 
 - `data-caption=*` => A message that will be displayed to the user as an instruction or warning
 
-- `data-classname=*` => Any class you want to be added to the link that will perform the user's click action if (s)he continues the action. This may be for styling or our **"AJAX GET"** class (which we'll touch shortly)
+- `data-classname=*` => Any class you want to be added to the link that will perform the user's click action if (s)he continues the action. This may be for styling or our **"AJAX GET REQUEST"** class (which we'll touch shortly)
 
-- `data-bc=*` (optional) => In the link that will perform the user's action you can decide whether an event should be broadcast when successful. We'll touch this in the next outline.
+- `data-bc=*` (optional) => In the link that will perform the user's action you can decide whether an event should be fired when successful. We'll touch this in the documentation soon (below).
 
-Note that these are optional and that there are alternatives in place already such that you can just simply do:
+Note that these are optional and that there are defaults in place already such that you can just simply do:
+
 ```
 <a class="pre-run" href="https://www.webloit.com">Shop Now</a>
 ```
+
 And it will mean the same thing using our defined values.
 
 6. ## Running AJAX Requests Via Links (GET Requests)
+
 A simple one looks just like this:
-```
+
+```html
 <a class='run-get-request' href="/delete-user">Remove</a>
 ```
 
-By default, on successful completion it won't show anything on screen. However, if it fails you'll be notify. If you will like to do something on successful completion then you should add an event via the `data-bc=*` property which you can listen to and do whatever you wish.
+By default, on successful completion, it won't display any information on screen. However, if it fails you'll be notified with a prompt on screen (if the request was made via AJAX). If you will like to do something on successful completion then you should add an event via the `data-bc=*` property which you can listen to and do whatever you wish.
 
 You can also warn (or instruct) before running the request by using the strategy discussed in the previous block and then including the class that controls the AJAX GET request via `data-classname=*` like below:
 
-```
-<a class='pre-run' data-caption="Are you sure you want to remove this student?" data-classname="run-get-request" data-bc="student_removed" 
+```html
+<a class='pre-run' data-caption="Are you sure you want to remove this user?" data-classname="run-get-request"
 href="/delete-user">Remove</a>
 ```
 
-7. ## Running AJAX Requests Via Forms (POST Requests)
+Or with adding an event:
 
-We advice that each input type be placed within a `div` for proper styling and alignment.
+```html
+<a class='pre-run' data-caption="Are you sure you want to remove this user?" data-classname="run-get-request" data-bc="user_removed" 
+href="/delete-user">Remove</a>
 ```
+
+7. ## Running AJAX Requests Via Forms (POST/GET Requests)
+
+We advice that each input type be placed within a `div` for proper styling and alignment. If you use our `registerEventListeners()` function then make sure it has the id or class attribute set to `form`. Example:
+
+```html
 <form action="submit" id="form" method="post">
     <div>
         <input type="text" name='name'>
@@ -304,46 +327,166 @@ We advice that each input type be placed within a `div` for proper styling and a
 </form>
 ```
 
-You can put as many input elements as you like and they'll be submitted to your server. 
+You can put as many input elements as you like and they'll be submitted to your server.
 
-It is important that your submit button has a `type="submit"`. 
+It is important that your submit button has a `type="submit"` attribute so we can identify the trigger. Also, as much as possible, try to enclose your `input` tag(s) in a `div`.
 
-And for **Laravel users**, it is also important that no element with similar ID of any of the input's value for `name` attribute exists. This is because we will create and append error messages to the particular input using the input's `name` attribute as ID (should there be any error from server regarding input).
+---
 
-When returning response from server (which will usually come in a JSON format) **Mmmuo** will try to detect if it has a **"message"** or **"msg"** property and then display it as successful (or failure) message to the user else it falls to default and just displays whatever was sent to the client.
+## Returning Response
 
-If you want a redirect to take place on successful request then you should pass the URL/link you want the user to be directed to (as response) by adding a `url` property to the response. A typical response may look like:
+When returning response from server (which will usually come in a JSON format) **Mmuo** will try to detect if it has a **"message"** property and then display it as successful (or failure) message to the user else it falls to default and just displays whatever was sent to the client. Unless you just send a plain string as response, you should structure your response. An example is:
 
-```
+```json
 {
-  "message": "Request was successful",
+    "message": {
+        "message":"Your message"
+    }
+}
+```
+
+OR
+
+```json
+{
+    "message":"Your message"
+}
+```
+
+OR
+
+```json
+{
+    "Your message"
+}
+```
+
+Or, if it is a validation message based on some form request (with a **HTTP status** of 422):
+
+```json
+{
+    "message": {
+        "message":"Please enter your email address here",
+        "target":"email" //This refers to the HTML input form that this validation message for (if any). It is completely optional.
+    }
+} 
+```
+
+OR
+
+```json
+{
+    "message":"Please enter your email address here",
+    "target":"email" //This refers to the HTML input form 'NAME' that this validation message is meant for (if any). 
+}
+```
+
+With the above the appropriate error message will be displayed right next after the input element it's (message) meant for (as long as the appropraite **HTTP status code** is set. For form request(s) please use **422** for error response(s) when dealing with form validation).
+
+---
+
+> If you use our [Zam PHP package](https://github.com/SirMekus/zam), using the `request()` function, this has already been taken care of so you can just, in case of form validation, pass a string as documented in the package.
+> If you, however, return response manually - maybe after some checks and validation - a `message` key will always be set so you don't have to set it yourself unless you are passing in an array which you'll like to listen to in the front-end (via event listening as discussed below). Example:
+
+```php
+//php
+//Default status code is 200
+return response('your success response');
+```
+
+OR
+
+```php
+//php
+//With your preferred status code
+return response('your error response', 422);
+```
+
+OR
+
+```php
+//php
+//This should always be 200.
+return response(['message'=>'your success response', 'url'=>'webloit.com']);
+```
+
+---
+
+If you wish to pass an array but wish for a particular response/message to be displayed to the user (from the array) then you must name that array key `message` (though it may not always be displayed to the user).
+
+If you want a redirect to take place on successful request then you should pass the URL/link you want the user to be directed to (as response) by adding a `url` property to the response. Please note that redirection is only done on successful response. If you will like it to done at your own convenience then pass an event and listen to it so you can implement it the way you like. A typical response may look like:
+
+```json
+{
   "url": "https://www.webloit.com"
+}
+```
+
+OR
+
+```json
+{
+  "message": "Your message",
+  "url": "https://www.webloit.com"
+}
+```
+
+OR
+
+```json
+{
+    "message":{
+        "message": "Your message",
+        "url": "https://www.webloit.com"
+    }
 }
 ```
 
 If you want the link to be opened on a different tab then you should add a `data-ext` attribute to your form tag (with any value; it doesn't matter here). Example:
 
-```
+```html
 <form action="submit" id="form" method="post" data-ext='true'>
-
 //
-
 </form>
 
 ```
 
-For proper styling and presentation we use the **HTTP status** to detect error or failed request(s) so when returning response(s) we advice you use appropriate **HTTP status header(s)**. No need to append the "Status Code" as property in the result in the reward because we don't use it.
+For proper message styling and presentation we use the **HTTP status** to detect error or failed request(s) so when returning response(s) we advice you use appropriate **HTTP status header(s)**. No need to append the "Status Code" as property in the result in the reward because we don't use it.
 
 ---
 
-# BONUS:
-## Emitting Events:
-For either GET or POST requests you may want to perform some other actions as well when the request is successful. You can simply do this by adding a `data-bc=*` attribute to either the `a` element or `form` tag with the name of the event you want to emit as value. We will then emit this event when the request is successful which you can listen to in your project. We'll pass across any data received from the server as parameter in the emitted event as well so you can inspect and do whatever you wish with it. 
+## BONUS
 
 ---
 
-# Utility Functions
-## Displaying Spinner:
+## Emitting Events
+
+For either GET or POST requests you may want to perform some other actions as well when the request is successful. You can simply do this by adding a `data-bc=*` attribute to either the `a` element or `form` tag with the name of the event you want to emit as value. We will then emit this event when the request is successful (a **200 HTTP status code** is received) which you can listen to in your project. We'll pass across any data received from the server as parameter in the emitted event as well so you can inspect and do whatever you wish with it. Example:
+
+```html
+<form data-bc="myevent" action="/action" class="form" method="get">
+    //input
+</form>
+```
+
+And then listen to it like so:
+
+```javascript
+document.addEventListener("myevent", (event) => {
+    //event => contains the response from server and some other properties which you should inspect to find out
+});
+```
+
+---
+
+## Utility Functions
+
+> Please note that these functions depend on Bootstrap for operation.
+
+---
+
+## Displaying Spinner
+
 You may want to indicate to user that an action is taking place. You can import and use our `showSpinner` function for this. E.g
 
 ```javascript
@@ -408,12 +551,14 @@ window.addEventListener("DOMContentLoaded", function() {
 });
 ```
 
+---
 
-# Meanwhile
+## Meanwhile
+
  You can connect with me on [LinkedIn](https://www.linkedin.com/in/sirmekus) for insightful tips and so we can grow our networks together.
 
  Patronise us on [Webloit](https://www.webloit.com).
 
  And follow me on [Twitter](https://www.twitter.com/Sire_Mekus).
 
- I encourage contribution even if it's in the documentation. Thank you.
+ I encourage contribution even if it's in the documentation. Thank you

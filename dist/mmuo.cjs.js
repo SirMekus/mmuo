@@ -39,7 +39,6 @@ function lazyLoadImages() {
         image.src = image.dataset.src;
         image.classList.remove("lazy-load"); // custom function that copies the path to the img
         // from data-src to src
-        //console.log(entry.target);
         // the image is now in place, stop watching
 
         self.unobserve(entry.target);
@@ -269,8 +268,6 @@ function uploadImage(e) {
     var _document$getElementB = document.getElementById("previously_uploaded"),
         files = _document$getElementB.files;
 
-    console.log(files);
-
     for (var i = 0; i < files.length; i++) {
       var merged_file = files[i];
       dt.items.add(merged_file);
@@ -296,7 +293,6 @@ function removeImage(event) {
   event.preventDefault();
   var currentButton = event.currentTarget;
   var index = currentButton.dataset.entry;
-  console.log("index is ".concat(index));
   var dt = new DataTransfer();
   var input = document.querySelector('.image');
 
@@ -313,9 +309,48 @@ function removeImage(event) {
   currentButton.parentElement.remove();
   document.querySelectorAll(".remove-image").forEach(function (currentValue, currentIndex, listObj) {
     listObj[currentIndex].setAttribute('data-entry', currentIndex);
-    console.log(currentValue + ', ' + currentIndex + ', ' + this);
-    console.log(listObj);
   });
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    enumerableOnly && (symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    })), keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = null != arguments[i] ? arguments[i] : {};
+    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
 }
 
 function insertAfter(newNode, existingNode) {
@@ -496,33 +531,50 @@ function postRequest(event) {
 
   submit_button.value = "...in progress";
   submit_button.setAttribute("disabled", "disabled");
-  axios.request({
+  var config = {
     url: action,
     method: method,
     headers: {
       'X-Requested-With': 'XMLHttpRequest'
     },
-    data: data_to_send,
     withCredentials: true
-  }).then(function (response) {
+  };
+
+  if (method.toLowerCase() == 'post') {
+    config = _objectSpread2(_objectSpread2({}, config), {}, {
+      data: data_to_send
+    });
+  } else {
+    config = _objectSpread2(_objectSpread2({}, config), {}, {
+      params: JSON.parse(JSON.stringify(Object.fromEntries(data_to_send)))
+    });
+  }
+
+  axios.request(config).then(function (response) {
+    var _response$data, _response$data$messag, _response$data2;
+
     removeElement(this_form, ".server-response");
 
-    if (response.data.url) {
-      if (!this_form.dataset.ext) {
-        window.open(response.data.url, '_ext');
-      } else {
-        window.open(response.data.url);
-      }
-    } else {
-      var _ref;
-
-      responseArea.innerHTML = "<span class='text-success'>".concat((_ref = response.data.msg || response.data.message) !== null && _ref !== void 0 ? _ref : response.data, "</span>");
-    }
-
     if (this_form.dataset.bc) {
-      document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, {
+      document.dispatchEvent(new CustomEvent(this_form.dataset.bc, {
         detail: response
       }));
+    }
+
+    if ((_response$data = response.data) !== null && _response$data !== void 0 && (_response$data$messag = _response$data.message) !== null && _response$data$messag !== void 0 && _response$data$messag.url || (_response$data2 = response.data) !== null && _response$data2 !== void 0 && _response$data2.url) {
+      var _response$data3, _response$data3$messa, _response$data4;
+
+      var url = ((_response$data3 = response.data) === null || _response$data3 === void 0 ? void 0 : (_response$data3$messa = _response$data3.message) === null || _response$data3$messa === void 0 ? void 0 : _response$data3$messa.url) || ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.url);
+
+      if (this_form.dataset.ext) {
+        window.open(url, '_ext');
+      } else {
+        window.open(url);
+      }
+    } else {
+      var _ref, _response$data$messag2;
+
+      responseArea.innerHTML = "<span class='text-success'>".concat((_ref = response.data.msg || ((_response$data$messag2 = response.data.message) === null || _response$data$messag2 === void 0 ? void 0 : _response$data$messag2.message) || response.data.message) !== null && _ref !== void 0 ? _ref : response.data, "</span>");
     }
   }).catch(function (error) {
     var _error$response$data$2, _ref2;
@@ -535,7 +587,6 @@ function postRequest(event) {
 
     switch (error.response.status) {
       case 422:
-        //data = error.response.data;
         var items = error.response.data.errors;
 
         if (items != undefined) {
@@ -573,7 +624,7 @@ function postRequest(event) {
             responseArea.innerHTML = "<span class='server-response text-danger'>".concat(error.response.data.message, "</span>");
           }
         } else {
-          var _error$response$data, _error$response$data$, _error$response$data2, _error$response$data3, _error$response$data4;
+          var _error$response$data, _error$response$data$, _error$response$data2, _error$response$data3, _error$response$data4, _error$response$data5;
 
           if ((_error$response$data = error.response.data) !== null && _error$response$data !== void 0 && (_error$response$data$ = _error$response$data.message) !== null && _error$response$data$ !== void 0 && _error$response$data$.message) {
             var msg = error.response.data.message.message;
@@ -585,8 +636,10 @@ function postRequest(event) {
 
           responseArea.innerHTML = "<span class='server-response text-danger'>" + msg + "</span>";
 
-          if ((_error$response$data3 = error.response.data) !== null && _error$response$data3 !== void 0 && (_error$response$data4 = _error$response$data3.message) !== null && _error$response$data4 !== void 0 && _error$response$data4.target) {
-            var inputName = error.response.data.message.target; //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
+          if ((_error$response$data3 = error.response.data) !== null && _error$response$data3 !== void 0 && (_error$response$data4 = _error$response$data3.message) !== null && _error$response$data4 !== void 0 && _error$response$data4.target || (_error$response$data5 = error.response.data) !== null && _error$response$data5 !== void 0 && _error$response$data5.target) {
+            var _error$response$data6;
+
+            var inputName = error.response.data.message.target || ((_error$response$data6 = error.response.data) === null || _error$response$data6 === void 0 ? void 0 : _error$response$data6.target); //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
 
             if (this_form.querySelector("[name='".concat(inputName, "']")) != null) {
               var sibling = this_form.querySelector("[name='".concat(inputName, "']")).nextElementSibling;

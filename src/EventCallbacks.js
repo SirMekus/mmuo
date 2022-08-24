@@ -223,33 +223,44 @@ function postRequest (event) {
     submit_button.value = "...in progress";
     submit_button.setAttribute("disabled", "disabled")
 
+    let config = {
+        url: action,
+        method: method,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        withCredentials: true
+      }
+
+      if(method.toLowerCase() == 'post'){
+        config = {...config, data: data_to_send}
+      }
+      else{
+        config = {...config, params: JSON.parse(JSON.stringify(Object.fromEntries(data_to_send)))}
+      }
 
     axios
-        .request({
-            url: action,
-            method,
-            headers: {'X-Requested-With': 'XMLHttpRequest'},
-            data: data_to_send,
-            withCredentials: true
-          })
+        .request(config)
         .then((response) => {
             removeElement(this_form, ".server-response");
             
-            if(response.data.url){
-                if (!this_form.dataset.ext) {
-                    window.open(response.data.url, '_ext');
+            if (this_form.dataset.bc) {
+                document.dispatchEvent(new CustomEvent(this_form.dataset.bc, { detail: response }))
+            }
+            
+            if(response.data?.message?.url || response.data?.url){
+                var url = response.data?.message?.url || response.data?.url
+                if (this_form.dataset.ext) {
+                    window.open(url, '_ext');
                 }
                 else{
-                    window.open(response.data.url);
+                    window.open(url);
                 }
             }
             else{
-                responseArea.innerHTML = `<span class='text-success'>${(response.data.msg || response.data.message) ?? response.data}</span>`;
+                responseArea.innerHTML = `<span class='text-success'>${(response.data.msg || (response.data.message?.message || response.data.message)) ?? response.data}</span>`;
             }
 
-            if (this_form.dataset.bc) {
-                document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, { detail: response }))
-            }
         })
         .catch((error) => {
             if (!error || !error.response) {
@@ -260,7 +271,6 @@ function postRequest (event) {
 
             switch (error.response.status) {
                 case 422:
-                    //data = error.response.data;
                     var items = error.response.data.errors;
                     if (items != undefined) {
                         for (var item in items) {
@@ -314,8 +324,8 @@ function postRequest (event) {
                             msg +
                             "</span>";
 
-                        if(error.response.data?.message?.target){
-                            const inputName = error.response.data.message.target
+                        if(error.response.data?.message?.target || error.response.data?.target){
+                            const inputName = error.response.data.message.target || error.response.data?.target
 
                             //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
                             if (this_form.querySelector(`[name='${inputName}']`) != null) {
