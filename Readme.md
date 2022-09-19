@@ -327,7 +327,29 @@ We advice that each input type be placed within a `div` for proper styling and a
 </form>
 ```
 
-You can put as many input elements as you like and they'll be submitted to your server.
+You can put as many input elements as you like and they'll be submitted to your server. By default the request will be sent as `"FormData"`. However, you can choose to send the request in JSON format. In this case you just have to specify it as a data attribute in the form tag itself and the library will take care of the rest. Example:
+
+``` html
+<form action="submit" id="form" method="post" data-json='true'>
+    <div>
+        <input type="text" name='name'>
+    </div>
+
+    <div>
+        <input type="email" name='email'>
+    </div>
+
+    <div>
+        <input type="password" name='password'>
+    </div>
+    
+    <div>
+        <input type="submit" value="Log In" />
+    </div>
+</form>
+```
+
+### NB: This transformation is only possible with non-GET requests
 
 It is important that your submit button has a `type="submit"` attribute so we can identify the trigger. Also, as much as possible, try to enclose your `input` tag(s) in a `div`.
 
@@ -367,7 +389,7 @@ Or, if it is a validation message based on some form request (with a **HTTP stat
 {
     "message": {
         "message":"Please enter your email address here",
-        "target":"email" //This refers to the HTML input form that this validation message for (if any). It is completely optional.
+        "target":"email" //This refers to the HTML input element that this validation message is meant for (if any). It is completely optional and should have the target's value as the exact input "NAME" attribute
     }
 } 
 ```
@@ -377,7 +399,7 @@ OR
 ```json
 {
     "message":"Please enter your email address here",
-    "target":"email" //This refers to the HTML input form 'NAME' that this validation message is meant for (if any). 
+    "target":"email" //This refers to the HTML input form 'NAME' that this validation message is meant for (if any). It is completely optional and should have the target's value as the exact input "NAME" attribute
 }
 ```
 
