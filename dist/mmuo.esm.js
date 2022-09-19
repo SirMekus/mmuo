@@ -359,6 +359,24 @@ function removeElement(scope, selector) {
   });
 }
 
+function checkParent(parent, child) {
+  var node = child.parentNode;
+  var currentChild = child;
+  var isFound = false; // keep iterating unless we find a node with the exact parent
+
+  while (!isFound) {
+    if (node == parent) {
+      isFound = true;
+      return currentChild;
+    }
+
+    currentChild = node;
+    node = currentChild.parentNode;
+  }
+
+  return false;
+}
+
 function togglePasswordVisibility(event) {
   event.preventDefault();
   var clicked_buton = event.currentTarget;
@@ -480,7 +498,8 @@ function postRequest(event) {
   if (this_form.querySelector("div.success") == null) {
     var div = document.createElement("div");
     div.className = "success";
-    this_form.insertBefore(div, submit_button.parentElement);
+    var childNode = checkParent(this_form, submit_button);
+    this_form.insertBefore(div, childNode);
   }
 
   var responseArea = this_form.querySelector(".success");

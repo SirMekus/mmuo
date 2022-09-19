@@ -1,4 +1,4 @@
-import { insertAfter, removeElement } from "./Dom.js"
+import { insertAfter, removeElement, checkParent } from "./Dom.js"
 import { empty, getKey, showAlert, showSpinner,removeSpinner,showCanvass } from "./helper.js"
 
 function togglePasswordVisibility(event){
@@ -155,7 +155,8 @@ function postRequest (event) {
         let div = document.createElement("div");
         div.className = "success";
 
-        this_form.insertBefore(div, submit_button.parentElement);
+        const childNode = checkParent(this_form, submit_button)
+        this_form.insertBefore(div, childNode);
     }
 
     var responseArea = this_form.querySelector(".success");
