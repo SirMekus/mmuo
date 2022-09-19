@@ -519,7 +519,7 @@ function postRequest(event) {
 
   var sub_value = submit_button.value;
   var action = this_form.getAttribute("action");
-  var method = this_form.getAttribute('method');
+  var method = this_form.getAttribute('method') || 'post';
   var data_to_send = new FormData(this_form);
 
   if (this_form.querySelector("div.upload-progress-div") == null) {
@@ -536,18 +536,24 @@ function postRequest(event) {
     method: method,
     headers: {
       'X-Requested-With': 'XMLHttpRequest'
-    },
-    withCredentials: true
+    } //withCredentials: true
+
   };
 
-  if (method.toLowerCase() == 'post') {
-    config = _objectSpread2(_objectSpread2({}, config), {}, {
-      data: data_to_send
-    });
-  } else {
-    config = _objectSpread2(_objectSpread2({}, config), {}, {
-      params: JSON.parse(JSON.stringify(Object.fromEntries(data_to_send)))
-    });
+  switch (method.toLowerCase()) {
+    case 'patch':
+    case "put":
+    case "delete":
+    case "post":
+      config = _objectSpread2(_objectSpread2({}, config), {}, {
+        data: this_form.dataset.json ? JSON.parse(JSON.stringify(Object.fromEntries(data_to_send))) : data_to_send
+      });
+      break;
+
+    default:
+      config = _objectSpread2(_objectSpread2({}, config), {}, {
+        params: JSON.parse(JSON.stringify(Object.fromEntries(data_to_send)))
+      });
   }
 
   axios.request(config).then(function (response) {

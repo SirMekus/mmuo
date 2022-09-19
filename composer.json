@@ -1,0 +1,13 @@
+{
+    "name": "sirmekus/mmuo",
+    "description": "Mmuo is a Javascript library for making AJAX requests, alternative to native browser alert() function, image/file upload and many other 'utility' features that will/can be added at interval basis (or in the future) - This is why it is called Mmuo (the Igbo Language name of \"spirit\"); because you won't see it coming.",
+    "type": "library",
+    "license": "ISC",
+    "authors": [
+        {
+            "name": "SirMekus",
+            "email": "mekus600@gmail.com"
+        }
+    ],
+    "require": {}
+}

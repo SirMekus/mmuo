@@ -206,7 +206,7 @@ function postRequest (event) {
 
     var action = this_form.getAttribute("action");
 
-    var method = this_form.getAttribute('method')
+    var method = this_form.getAttribute('method') || 'post'
 
     var data_to_send = new FormData(this_form);
 
@@ -229,14 +229,23 @@ function postRequest (event) {
         headers: {
           'X-Requested-With': 'XMLHttpRequest'
         },
-        withCredentials: true
+        //withCredentials: true
       }
 
-      if(method.toLowerCase() == 'post'){
-        config = {...config, data: data_to_send}
-      }
-      else{
-        config = {...config, params: JSON.parse(JSON.stringify(Object.fromEntries(data_to_send)))}
+      switch(method.toLowerCase()){
+        case 'patch':
+
+        case "put":
+
+        case "delete":
+
+        case "post":
+            config = {...config, data: this_form.dataset.json ? JSON.parse(JSON.stringify(Object.fromEntries(data_to_send))) : data_to_send}
+            
+            break
+
+        default:
+            config = {...config, params: JSON.parse(JSON.stringify(Object.fromEntries(data_to_send)))}
       }
 
     axios
