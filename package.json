@@ -1,6 +1,6 @@
 {
   "name": "mmuo",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "A native javascript library for making AJAX requests, alternative to native browser \"alert()\" function, lazy-loading images, for image/file upload and many other utility features",
   "main": "dist/mmuo.cjs.js",
   "module": "dist/mmuo.esm.js",
@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "pretest": "npm run build"
   },
-  "keywords": ["laravel", "vue", "ajax", "mmuo", "vuelar", "sirmekus"],
+  "keywords": ["laravel", "vue", "ajax", "mmuo", "vuelar", "sirmekus", "zam"],
   "author": "Emeka Ohakwe <SirMekus; Uncle E> (https://www.linkedin.com/in/sirmekus)",
   "license": "MIT",
   "peerDependencies": {

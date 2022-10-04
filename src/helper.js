@@ -125,6 +125,7 @@ function showCanvass($msg) {
         div.innerHTML = `<div class='offcanvas-header d-flex justify-content-center'>
         <h5 class='offcanvas-title text-center' id='offcanvasBottomLabel'>${$msg}</h5>
       </div>`;
+      div.style.height = "80px";
       document.body.appendChild(div);
       
     new bootstrap.Offcanvas(document.getElementById("offcanvasBottom")).show();

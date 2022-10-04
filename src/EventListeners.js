@@ -1,5 +1,5 @@
 import { triggerFileChanger, uploadImage, removeImage } from "./ImageUpload.js";
-import { togglePasswordVisibility, checkIfPasswordsMatch, generatePassword, alertBeforeRunning, getRequest, postRequest } from "./EventCallbacks.js"
+import { togglePasswordVisibility, checkIfPasswordsMatch, generatePassword, alertBeforeRunning, openAsModal, getRequest, postRequest } from "./EventCallbacks.js"
 
 /**
  * Adds a istener for specific tags for elements that may not yet
@@ -37,6 +37,8 @@ function registerEventListeners() {
     on(".password-checker", "focusout", checkIfPasswordsMatch);
 
     on(".gen-password", "click", generatePassword);
+
+    on(".open-as-modal", "click", openAsModal);
 
     //function to run when user attempts to run any feature that first needs coonfirmation. This replaces the native "alert" prompt of browsers.
     on(".pre-run", "click", alertBeforeRunning);

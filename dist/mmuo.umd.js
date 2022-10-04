@@ -150,6 +150,7 @@
       div.setAttribute('tabindex', -1);
       div.setAttribute('aria-labelledby', 'offcanvasBottomLabel');
       div.innerHTML = "<div class='offcanvas-header d-flex justify-content-center'>\n        <h5 class='offcanvas-title text-center' id='offcanvasBottomLabel'>".concat($msg, "</h5>\n      </div>");
+      div.style.height = "80px";
       document.body.appendChild(div);
       new bootstrap.Offcanvas(document.getElementById("offcanvasBottom")).show();
     }
@@ -340,6 +341,16 @@
       return target;
     }
 
+    function _typeof(obj) {
+      "@babel/helpers - typeof";
+
+      return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+        return typeof obj;
+      } : function (obj) {
+        return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      }, _typeof(obj);
+    }
+
     function _defineProperty(obj, key, value) {
       if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -459,6 +470,59 @@
       showAlert(caption, href, textWord, classToUse, bc);
     }
 
+    function openAsModal(event) {
+      event.preventDefault();
+
+      if (document.querySelector(".close-mmuo-modal")) {
+        document.querySelector(".close-mmuo-modal").click();
+      }
+
+      showSpinner();
+      var clickedLink = event.currentTarget;
+      var href = clickedLink.getAttribute("href");
+
+      if (!href || href == "#") {
+        removeSpinner();
+        return;
+      }
+
+      axios.request({
+        url: href,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        withCredentials: true
+      }).then(function (response) {
+        if (document.querySelector(".mmuo-modal") != null) {
+          new bootstrap.Modal(document.getElementById('mmuo-modal')).hide();
+          document.querySelector(".mmuo-modal").remove();
+        }
+
+        var shrink = clickedLink.dataset.shrink;
+        var backdrop = clickedLink.dataset.static;
+        var element = document.createElement("div");
+        element.className = "modal fade mmuo-modal";
+        element.id = 'mmuo-modal';
+        element.setAttribute('tabindex', -1);
+        element.setAttribute('aria-labelledby', 'mmuoModal');
+        element.setAttribute('aria-hidden', 'true');
+
+        if (backdrop) {
+          element.setAttribute('data-bs-backdrop', 'static');
+        }
+
+        element.setAttribute('role', 'dialog');
+        element.innerHTML = "\n                        <div class='modal-dialog ".concat(!shrink ? 'modal-xl' : null, "'> \n                            <div class='modal-content'> <div class='modal-header'> \n                            <button type='button' class='close-mmuo-modal btn-close' data-bs-dismiss='modal' aria-hidden='true' aria-label='Close'></button> \n                            </div> \n                            <div class='modal-body'>\n                                ").concat(response.data, " \n                            </div> \n                        </div>");
+        document.body.appendChild(element);
+        var modal = new bootstrap.Modal(document.getElementById('mmuo-modal'));
+        modal.show();
+      }).catch(function (error) {
+        showCanvass("<div class='text-danger'>" + error.response.data.message + "</div>");
+      }).then(function () {
+        removeSpinner();
+      });
+    }
+
     function getRequest(event) {
       event.preventDefault();
 
@@ -501,13 +565,14 @@
 
       var submit_button = this_form.querySelector("input[type='submit']");
 
-      if (this_form.querySelector("div.success") == null) {
-        var div = document.createElement("div");
-        div.className = "success";
-        var childNode = checkParent(this_form, submit_button);
-        this_form.insertBefore(div, childNode);
+      if (this_form.querySelector(".div.success")) {
+        this_form.querySelector(".div.success").remove();
       }
 
+      var div = document.createElement("div");
+      div.className = "success";
+      var childNode = checkParent(this_form, submit_button);
+      this_form.insertBefore(div, childNode);
       var responseArea = this_form.querySelector(".success");
 
       if (this_form.querySelector("#hidden_content") != null) {
@@ -601,7 +666,15 @@
         } else {
           var _ref, _response$data$messag2;
 
-          responseArea.innerHTML = "<span class='text-success'>".concat((_ref = response.data.msg || ((_response$data$messag2 = response.data.message) === null || _response$data$messag2 === void 0 ? void 0 : _response$data$messag2.message) || response.data.message) !== null && _ref !== void 0 ? _ref : response.data, "</span>");
+          var serverResponse = (_ref = response.data.msg || ((_response$data$messag2 = response.data.message) === null || _response$data$messag2 === void 0 ? void 0 : _response$data$messag2.message) || response.data.message) !== null && _ref !== void 0 ? _ref : response.data;
+
+          if (_typeof(serverResponse) == 'object') {
+            var _submit_button$datase;
+
+            serverResponse = (_submit_button$datase = submit_button.dataset.mSuccess) !== null && _submit_button$datase !== void 0 ? _submit_button$datase : "Operation was successful";
+          }
+
+          responseArea.innerHTML = "<span class='text-success'>".concat(serverResponse, "</span>");
         }
       }).catch(function (error) {
         var _error$response$data$2, _ref2;
@@ -753,7 +826,8 @@
       on(".remove-image", "click", removeImage);
       on(".password-visibility", "click", togglePasswordVisibility);
       on(".password-checker", "focusout", checkIfPasswordsMatch);
-      on(".gen-password", "click", generatePassword); //function to run when user attempts to run any feature that first needs coonfirmation. This replaces the native "alert" prompt of browsers.
+      on(".gen-password", "click", generatePassword);
+      on(".open-as-modal", "click", openAsModal); //function to run when user attempts to run any feature that first needs coonfirmation. This replaces the native "alert" prompt of browsers.
 
       on(".pre-run", "click", alertBeforeRunning);
       on(".run-get-request", "click", getRequest); //General for all pages that use a POST submit method especially.

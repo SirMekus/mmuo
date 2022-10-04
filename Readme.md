@@ -30,10 +30,23 @@ window.addEventListener("DOMContentLoaded", function() {
 });
 ```
 
+OR,
+
+```javascript
+window.mmuo = require("mmuo");
+
+//Always nice to register events when the DOM has been fully loaded
+window.addEventListener("DOMContentLoaded", function() {
+    window.mmuo.registerEventListeners()
+});
+```
+
 Or, if you prefer to link via `<script>` in HTML, especially if you don't use a bundler, then prefix the function(s) with **"`mmuo`"**:
 
 ```javascript
 <script src="/path_to_node_module_or_installation_directory/mmuo/dist/mmuo.umd.js"></script>   
+<script src="/path_to_axios_node_module_installation_directory"></script> 
+<script src="/path_to_bootstrap_node_module_installation_directory"></script> 
 
 <script>
     window.addEventListener("DOMContentLoaded", function() {
@@ -42,7 +55,28 @@ Or, if you prefer to link via `<script>` in HTML, especially if you don't use a 
 </script>
 ```
 
-Please note that in using this function some classes and/or ID's have already been defined and registered so all you have to do is assign any of these classes or ID's to your element and you're good to go. The functions are already defined and you can use them on your own if you want to create or listen to custom events on your own. The workflow, should you choose to register events on your own with a different class/ID name, should be the same:
+> Please note that this package requires Bootsrap to function effectively. And if you'll work with AJAX request, this package requires Axios as well. If you use a bundler you should import these dependencies into your application and set "bootstrap" and "axios" window variables. Example:
+
+```javascript
+//app.js or main.js
+window.bootstrap = require('bootstrap');
+
+window.axios = require('axios');
+```
+
+OR,
+
+```javascript
+//app.js or main.js
+import * as bootstrap from '~bootstrap';
+import axios from 'axios';
+
+window.bootstrap =  bootstrap
+
+window.axios = axios;
+```
+
+Please note that in using this function some classes and/or ID's have already been defined and registered so all you have to do is assign any of these classes or ID's to your HTML element and you're good to go. The functions are already defined (in the `registerEventListeners` function imported earlier) and you can use them on your own if you want to create or listen to custom events on your own. The workflow, should you choose to register events on your own with a different class/ID name, should be the same:
 
 | Class/ID | Event | Function | Description
 | ----------- | ----------- | ----------- | ----------- |
@@ -58,7 +92,9 @@ Please note that in using this function some classes and/or ID's have already be
 
 All the above functions can simply be imported and used in your project.
 
-> Note that these are just class/ID names you can use on the fly without any configuration and that these names, if they conflict with any class/ID name already in use, can be changed to your preference. However, you will have to manually register your events
+> Note that these are just class/ID names you can use on the fly without any configuration and that these names, if they conflict with any class/ID name already in use, can be changed to your preference. However, you will have to manually register your events.
+
+
 > Also note that proper styling is done with Bootstrap so you may want to include it in your project
 
 ## Registering Events
@@ -83,6 +119,12 @@ You can register a single event on multiple selectors or elements by separating 
 ```javascript
 window.addEventListener("DOMContentLoaded", function() {
     on('.selectorOne', 'click', myFunctionOrYourFunctionToRun);
+
+    /*
+    OR,
+    mmuo.on('.selectorOne', 'click', myFunctionOrYourFunctionToRun);
+
+    */
 });
 ```
 
@@ -151,7 +193,7 @@ Please note that the class names specified here are optional and you are free to
 
 ```javascript
 <div class="preview-upload">
-<!-- The selected photo will be displayed here. This is always very important-->
+<!-- The selected photo will be displayed here. This is very important-->
 </div>
 
 <form enctype="multipart/form-data" action="#" method="post">
@@ -210,7 +252,7 @@ Just make sure they (inputs) have the `name` attributes set to **"password"** an
 
 4. ## Generating Password
 
-Give the button a `gen-password` class. Example:
+Give the button a `gen-password` class and place it to the input element you want it to be displayed in. Example:
 
 ```html
 <div>
@@ -303,7 +345,7 @@ Or with adding an event:
 href="/delete-user">Remove</a>
 ```
 
-7. ## Running AJAX Requests Via Forms (POST/GET Requests)
+7. ## Running AJAX Requests Via Forms (POST,GET,PUT,DELETE,etc Requests)
 
 We advice that each input type be placed within a `div` for proper styling and alignment. If you use our `registerEventListeners()` function then make sure it has the id or class attribute set to `form`. Example:
 
@@ -327,7 +369,7 @@ We advice that each input type be placed within a `div` for proper styling and a
 </form>
 ```
 
-You can put as many input elements as you like and they'll be submitted to your server. By default the request will be sent as `"FormData"`. However, you can choose to send the request in JSON format. In this case you just have to specify it as a data attribute in the form tag itself and the library will take care of the rest. Example:
+You can put as many input elements as you like and they'll be submitted to your server. By default the request will be sent as `"FormData"`. However, you can choose to send the request in `REQUEST PAYLOAD` (JSON) format. In this case you just have to specify it as a data attribute in the form tag itself and the library will take care of the rest. Example:
 
 ``` html
 <form action="submit" id="form" method="post" data-json='true'>
@@ -475,6 +517,30 @@ If you want the link to be opened on a different tab then you should add a `data
 
 For proper message styling and presentation we use the **HTTP status** to detect error or failed request(s) so when returning response(s) we advice you use appropriate **HTTP status header(s)**. No need to append the "Status Code" as property in the result in the reward because we don't use it.
 
+8. ## OPENING PAGE AS MODAL
+
+You may want to open a page (via a link) as a modal. This page should typically only contain elements without the `html` or `body` tag; for instance, a form. If you imported the `registerEventListeners` function of this package in your project there is already an event listener for such. All you need to do is give an `a` element the `open-as-modal` class and you're good to go (Or, import the function itself - `openAsModal` - and attach to your custom event listener (if you didn't and will like to use some of our functions itself)) Example:
+
+```HTML
+<a href="/your-link-goes-here" class="open-as-modal">Open Modal</a>
+```
+
+The link will be called and the called page will be displayed as modal in the modal box.
+
+By default, the modal will occupy the full screen on desktop or a bigger device (but will be contained on smaller device(s)). To make the modal smaller on desktop give it a `data-shrink` attribute with any value you like. Example:
+
+```HTML
+<a href="/your-link-goes-here" class="open-as-modal" data-shrink='true'>Open Modal</a>
+```
+
+Also, clicking outside the modal body will close the modal. To disable this behaviour set a data `data-static` with any value you like. Example:
+
+```HTML
+<a href="/your-link-goes-here" class="open-as-modal" data-static='true'>Open Modal</a>
+```
+
+Now clicking outside the modal will not close the modal anymore.
+
 ---
 
 ## BONUS
@@ -503,7 +569,7 @@ document.addEventListener("myevent", (event) => {
 
 ## Utility Functions
 
-> Please note that these functions depend on Bootstrap for operation.
+> Please note that these functions depend on Bootstrap for operation, and are among some of the functions exposed by this package for your consumption.
 
 ---
 
