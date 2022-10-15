@@ -1,6 +1,6 @@
 {
   "name": "mmuo",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A native javascript library for making AJAX requests, alternative to native browser \"alert()\" function, lazy-loading images, for image/file upload and many other utility features",
   "main": "dist/mmuo.cjs.js",
   "module": "dist/mmuo.esm.js",

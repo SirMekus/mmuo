@@ -32,8 +32,7 @@ function lazyLoadImages() {
       // isIntersecting is a property exposed by the interface
       if (entry.isIntersecting) {
         var image = entry.target;
-        image.src = image.dataset.src;
-        image.classList.remove("lazy-load"); // custom function that copies the path to the img
+        image.src = image.dataset.src; // custom function that copies the path to the img
         // from data-src to src
         // the image is now in place, stop watching
 
@@ -189,6 +188,48 @@ function showAlert(caption, href, textWord) {
   div.innerHTML = "<div class='modal-dialog'> <div class='modal-content'> <div class='modal-header'> <button type='button' class='btn-close' data-bs-dismiss='modal' aria-hidden='true'> </button> </div> <div class='modal-body'><div class='card'> <div class='card-body'><h5 class='card-title d-flex justify-content-center'>".concat(caption, "</h5></div><div class='card-footer'> <div class='btn-group d-flex justify-content-center' data-toggle='buttons'> <button type='button' class='close close-alert btn btn-dark btn-lg' data-bs-dismiss='modal' aria-hidden='true'>Cancel</button><a href='").concat(href, "' class='ms-2 ").concat(classToUse, " btn btn-danger btn-lg' data-bc=\"").concat(bc, "\">").concat(capitalLetters$1(textWord), "</a></div></div> <div id='responseArea'></div></div></div> </div></div>");
   document.body.appendChild(div);
   new bootstrap.Modal(document.getElementById("myModal")).show();
+}
+
+function DisplayAsToast(msg) {
+  var status = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'info';
+  var bgClass;
+
+  switch (status) {
+    case true:
+      bgClass = 'bg-success';
+      break;
+
+    case false:
+      bgClass = 'bg-danger';
+      break;
+
+    default:
+      bgClass = 'bg-primary';
+  } //Just in case one has been created already, we remove it
+
+
+  if (document.querySelector("#notificationToastDiv") != null) {
+    document.querySelector("#notificationToastDiv").remove();
+  }
+
+  var div = document.createElement('div');
+  div.className = 'position-fixed top-0 end-0 p-3 d-flex justify-content-end';
+  div.id = 'notificationToastDiv';
+  div.style.zIndex = '1100';
+  div.innerHTML = "<div id=\"notificationToast\" class=\"toast ".concat(bgClass, " text-white\" role=\"alert\" aria-live=\"assertive\" aria-atomic=\"true\">\n        <div class=\"toast-body\">\n          <button type=\"button\" class=\"btn-close float-end\" data-bs-dismiss=\"toast\" aria-label=\"Close\"></button>\n          ").concat(msg, "\n        </div>\n      </div>");
+  document.body.appendChild(div);
+  new bootstrap.Toast(document.getElementById("notificationToast")).show();
+}
+
+function getQueryStringsFromUrl(url) {
+  if (url.split("?").length > 1) {
+    var query = url.split("?")[1];
+    var urlSearchParams = new URLSearchParams(query);
+    var params = Object.fromEntries(urlSearchParams.entries());
+    return params;
+  } else {
+    return null;
+  }
 }
 
 function triggerFileChanger(e) {
@@ -601,14 +642,7 @@ function postRequest(event) {
   var action = this_form.getAttribute("action");
   var method = this_form.getAttribute('method') || 'post';
   var data_to_send = new FormData(this_form);
-
-  if (this_form.querySelector("div.upload-progress-div") == null) {
-    var ajaxIndicator = document.createElement("div");
-    ajaxIndicator.className = "d-flex justify-content-center spinner-div";
-    ajaxIndicator.innerHTML = "<div class='spinner-grow position-fixed' role='status' style='left: 50%; top: 50%; height:60px; width:60px; margin:0px auto; position: absolute; z-index:1000; color:var(--color-theme)'><span class='sr-only'>Loading...</span>";
-    document.body.appendChild(ajaxIndicator);
-  }
-
+  showSpinner();
   submit_button.value = "...in progress";
   submit_button.setAttribute("disabled", "disabled");
   var config = {
@@ -616,8 +650,7 @@ function postRequest(event) {
     method: method,
     headers: {
       'X-Requested-With': 'XMLHttpRequest'
-    } //withCredentials: true
-
+    }
   };
 
   switch (method.toLowerCase()) {
@@ -668,7 +701,7 @@ function postRequest(event) {
         serverResponse = (_submit_button$datase = submit_button.dataset.mSuccess) !== null && _submit_button$datase !== void 0 ? _submit_button$datase : "Operation was successful";
       }
 
-      responseArea.innerHTML = "<span class='text-success'>".concat(serverResponse, "</span>");
+      responseArea.innerHTML = "<span class='text-success fw-bold'>".concat(serverResponse, "</span>");
     }
   }).catch(function (error) {
     var _error$response$data$2, _ref2;
@@ -713,9 +746,9 @@ function postRequest(event) {
           }
 
           if (items.length > 1) {
-            responseArea.innerHTML = "<span class='server-response text-danger'>Please make sure you fill required fields in the form and try again.</span>";
+            responseArea.innerHTML = "<span class='server-response text-danger fw-bold'>Please make sure you fill required fields in the form and try again.</span>";
           } else {
-            responseArea.innerHTML = "<span class='server-response text-danger'>".concat(error.response.data.message, "</span>");
+            responseArea.innerHTML = "<span class='server-response text-danger fw-bold'>".concat(error.response.data.message, "</span>");
           }
         } else {
           var _error$response$data, _error$response$data$, _error$response$data2, _error$response$data3, _error$response$data4, _error$response$data5;
@@ -728,7 +761,7 @@ function postRequest(event) {
             var msg = error.response.data;
           }
 
-          responseArea.innerHTML = "<span class='server-response text-danger'>" + msg + "</span>";
+          responseArea.innerHTML = "<span class='server-response text-danger fw-bold'>" + msg + "</span>";
 
           if ((_error$response$data3 = error.response.data) !== null && _error$response$data3 !== void 0 && (_error$response$data4 = _error$response$data3.message) !== null && _error$response$data4 !== void 0 && _error$response$data4.target || (_error$response$data5 = error.response.data) !== null && _error$response$data5 !== void 0 && _error$response$data5.target) {
             var _error$response$data6;
@@ -744,13 +777,13 @@ function postRequest(event) {
                 //Then we need to create it
                 var element = document.createElement("div");
                 element.id = _id;
-                element.className = "server-response text-danger";
+                element.className = "server-response text-danger fw-bold";
                 insertAfter(element, this_form.querySelector("[name='".concat(inputName, "']")));
               } else {
                 if (sibling.id != _id) {
                   var element = document.createElement("div");
                   element.id = _id;
-                  element.className = "server-response text-danger";
+                  element.className = "server-response text-danger fw-bold";
                   insertAfter(element, sibling);
                 }
               }
@@ -764,25 +797,25 @@ function postRequest(event) {
         break;
 
       case 401:
-        responseArea.innerHTML = "<span class='server-response text-danger'>" + error.response.data.message + "</span>";
+        responseArea.innerHTML = "<span class='server-response text-danger fw-bold'>" + error.response.data.message + "</span>";
         break;
 
       case 403:
         var forbidden = (_error$response$data$2 = error.response.data.message) !== null && _error$response$data$2 !== void 0 ? _error$response$data$2 : error.response.data;
-        responseArea.innerHTML = "<span class='server-response text-danger'>" + forbidden + "</span>";
+        responseArea.innerHTML = "<span class='server-response text-danger fw-bold'>" + forbidden + "</span>";
         break;
 
       case 404:
-        responseArea.innerHTML = (_ref2 = "<span class='server-response text-danger'>" + error.response.data.message) !== null && _ref2 !== void 0 ? _ref2 : error.response.data + "</span>";
+        responseArea.innerHTML = (_ref2 = "<span class='server-response text-danger fw-bold'>" + error.response.data.message) !== null && _ref2 !== void 0 ? _ref2 : error.response.data + "</span>";
         break;
 
       default:
-        responseArea.innerHTML = "<span class='server-response text-danger'>There was a problem in submission. Please try again</span>";
+        responseArea.innerHTML = "<span class='server-response text-danger fw-bold'>There was a problem in submission. Please try again</span>";
     }
   }).then(function () {
     submit_button.value = sub_value;
     submit_button.removeAttribute("disabled");
-    document.querySelector(".spinner-div").remove();
+    removeSpinner();
   });
 }
 
@@ -829,4 +862,4 @@ function registerEventListeners() {
   on("#form .form", "submit", postRequest);
 }
 
-export { alertBeforeRunning, checkIfPasswordsMatch, generatePassword, getRequest, lazyLoadImages, on, postRequest, registerEventListeners, removeSpinner, showAlert, showCanvass, showSpinner, togglePasswordVisibility };
+export { DisplayAsToast, alertBeforeRunning, checkIfPasswordsMatch, empty, generatePassword, getKey, getQueryStringsFromUrl, getRequest, keyGen, lazyLoadImages, on, postRequest, registerEventListeners, removeSpinner, showAlert, showCanvass, showSpinner, togglePasswordVisibility };

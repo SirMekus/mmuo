@@ -280,15 +280,7 @@ function postRequest (event) {
 
     var data_to_send = new FormData(this_form);
 
-    if (this_form.querySelector("div.upload-progress-div") == null) {
-        var ajaxIndicator = document.createElement("div");
-        ajaxIndicator.className =
-            "d-flex justify-content-center spinner-div";
-        ajaxIndicator.innerHTML =
-            "<div class='spinner-grow position-fixed' role='status' style='left: 50%; top: 50%; height:60px; width:60px; margin:0px auto; position: absolute; z-index:1000; color:var(--color-theme)'><span class='sr-only'>Loading...</span>";
-
-        document.body.appendChild(ajaxIndicator);
-    }
+    showSpinner()
 
     submit_button.value = "...in progress";
     submit_button.setAttribute("disabled", "disabled")
@@ -299,7 +291,6 @@ function postRequest (event) {
         headers: {
           'X-Requested-With': 'XMLHttpRequest'
         },
-        //withCredentials: true
       }
 
       switch(method.toLowerCase()){
@@ -343,7 +334,7 @@ function postRequest (event) {
                     serverResponse = submit_button.dataset.mSuccess ?? "Operation was successful"
                 }
 
-                responseArea.innerHTML = `<span class='text-success'>${serverResponse}</span>`;
+                responseArea.innerHTML = `<span class='text-success fw-bold'>${serverResponse}</span>`;
             }
 
         })
@@ -390,9 +381,9 @@ function postRequest (event) {
 
                         if (items.length > 1) {
                             responseArea.innerHTML =
-                                "<span class='server-response text-danger'>Please make sure you fill required fields in the form and try again.</span>";
+                                "<span class='server-response text-danger fw-bold'>Please make sure you fill required fields in the form and try again.</span>";
                         } else {
-                            responseArea.innerHTML = `<span class='server-response text-danger'>${error.response.data.message}</span>`;
+                            responseArea.innerHTML = `<span class='server-response text-danger fw-bold'>${error.response.data.message}</span>`;
                         }
                     }
                     else {
@@ -405,7 +396,7 @@ function postRequest (event) {
                         }
                         
                         responseArea.innerHTML =
-                            "<span class='server-response text-danger'>" +
+                            "<span class='server-response text-danger fw-bold'>" +
                             msg +
                             "</span>";
 
@@ -422,14 +413,14 @@ function postRequest (event) {
                                     //Then we need to create it
                                     var element = document.createElement("div");
                                     element.id = id
-                                    element.className = "server-response text-danger";
+                                    element.className = "server-response text-danger fw-bold";
                                     insertAfter(element, this_form.querySelector(`[name='${inputName}']`));
                                 } 
                                 else {
                                     if (sibling.id != id) {
                                         var element = document.createElement("div");
                                         element.id = id;
-                                        element.className = "server-response text-danger";
+                                        element.className = "server-response text-danger fw-bold";
                                         insertAfter(element, sibling);
                                     }
                                 }
@@ -445,7 +436,7 @@ function postRequest (event) {
 
                 case 401:
                     responseArea.innerHTML =
-                        "<span class='server-response text-danger'>" +
+                        "<span class='server-response text-danger fw-bold'>" +
                         error.response.data.message +
                         "</span>";
 
@@ -454,7 +445,7 @@ function postRequest (event) {
                 case 403:
                     var forbidden = error.response.data.message ?? error.response.data
                     responseArea.innerHTML =
-                            "<span class='server-response text-danger'>" +
+                            "<span class='server-response text-danger fw-bold'>" +
                             forbidden +
                             "</span>";
 
@@ -462,7 +453,7 @@ function postRequest (event) {
 
                 case 404:
                     responseArea.innerHTML =
-                        "<span class='server-response text-danger'>" +
+                        "<span class='server-response text-danger fw-bold'>" +
                         error.response.data.message ?? error.response.data +
                         "</span>";
 
@@ -470,14 +461,14 @@ function postRequest (event) {
 
                 default:
                     responseArea.innerHTML =
-                        "<span class='server-response text-danger'>There was a problem in submission. Please try again</span>";
+                        "<span class='server-response text-danger fw-bold'>There was a problem in submission. Please try again</span>";
             }
         })
         .then(() => {
             submit_button.value = sub_value;
 
             submit_button.removeAttribute("disabled");
-            document.querySelector(".spinner-div").remove();
+            removeSpinner()
         });
 }
 

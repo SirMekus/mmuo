@@ -28,7 +28,6 @@ function lazyLoadImages() {
             if (entry.isIntersecting) {
                 var image = entry.target;
                 image.src = image.dataset.src;
-                image.classList.remove("lazy-load");
                 // custom function that copies the path to the img
                 // from data-src to src
                 // the image is now in place, stop watching
@@ -173,4 +172,53 @@ function showAlert(caption, href, textWord, classToUse=null, bc=null) {
     new bootstrap.Modal(document.getElementById("myModal")).show();
 }
 
-export {showCanvass, showSpinner, removeSpinner, showAlert, capitalLetters, getKey, keyGen, lazyLoadImages, empty}
+function DisplayAsToast(msg, status='info') {
+    let bgClass
+    
+    switch(status){
+        case true:
+            bgClass = 'bg-success'
+            break;
+
+        case false:
+            bgClass = 'bg-danger'
+            break;
+
+        default:
+            bgClass = 'bg-primary'
+    }
+
+    //Just in case one has been created already, we remove it
+    if(document.querySelector("#notificationToastDiv") != null){
+        document.querySelector("#notificationToastDiv").remove();
+    }
+
+    let div = document.createElement('div');
+        div.className = 'position-fixed top-0 end-0 p-3 d-flex justify-content-end';
+        div.id = 'notificationToastDiv'
+        div.style.zIndex = '1100'
+        div.innerHTML = `<div id="notificationToast" class="toast ${bgClass} text-white" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+          <button type="button" class="btn-close float-end" data-bs-dismiss="toast" aria-label="Close"></button>
+          ${msg}
+        </div>
+      </div>`;
+    
+    document.body.appendChild(div);
+
+    new bootstrap.Toast(document.getElementById("notificationToast")).show();
+}
+
+function getQueryStringsFromUrl(url){
+    if(url.split("?").length > 1){
+        var query = url.split("?")[1]
+        var urlSearchParams = new URLSearchParams(query)
+        var params = Object.fromEntries(urlSearchParams.entries());
+        return params
+    }
+    else{
+        return null
+    }
+}
+
+export {showCanvass, showSpinner, removeSpinner, showAlert, capitalLetters, getKey, keyGen, lazyLoadImages, empty, DisplayAsToast, getQueryStringsFromUrl}
