@@ -238,6 +238,28 @@
       }
     }
 
+    function moneyFormat(amount) {
+      var currency = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "NGN";
+
+      //else the currency must have been set.
+      if (!currency || typeof currency != "string") {
+        currency = "NGN";
+      }
+
+      if (typeof amount != 'number') {
+        amount = 0;
+      }
+
+      var formatter = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currency // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0,
+        //maximumFractionDigits: 0,
+
+      });
+      return formatter.format(amount);
+    }
+
     function triggerFileChanger(e) {
       var _window$maxUpload;
 
@@ -878,6 +900,7 @@
     exports.getRequest = getRequest;
     exports.keyGen = keyGen;
     exports.lazyLoadImages = lazyLoadImages;
+    exports.moneyFormat = moneyFormat;
     exports.on = on;
     exports.postRequest = postRequest;
     exports.registerEventListeners = registerEventListeners;

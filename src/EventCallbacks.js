@@ -215,8 +215,7 @@ function postRequest (event) {
 
     var this_form = event.currentTarget;
 
-    //In case there are more than 2 submit buttons in a form.
-    var submit_button = this_form.querySelector("input[type='submit']");
+    var submit_button = this_form.querySelector("input[type='submit']") || this_form.querySelector("button[type='submit']");
 
     if(this_form.querySelector(".div.success")){
         this_form.querySelector(".div.success").remove(); 
@@ -324,7 +323,7 @@ function postRequest (event) {
                     window.open(url, '_ext');
                 }
                 else{
-                    window.open(url);
+                    location.href = url
                 }
             }
             else{

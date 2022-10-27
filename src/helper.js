@@ -221,4 +221,26 @@ function getQueryStringsFromUrl(url){
     }
 }
 
-export {showCanvass, showSpinner, removeSpinner, showAlert, capitalLetters, getKey, keyGen, lazyLoadImages, empty, DisplayAsToast, getQueryStringsFromUrl}
+function moneyFormat(amount, currency = "NGN") {
+    //else the currency must have been set.
+    if (!currency || typeof currency != "string") {
+        currency = "NGN";
+    }
+
+    if(typeof amount != 'number'){
+        amount = 0
+    }
+
+    var formatter = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currency,
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0,
+        //maximumFractionDigits: 0,
+    });
+
+    return formatter.format(amount);
+}
+
+export {showCanvass, showSpinner, removeSpinner, showAlert, capitalLetters, getKey, keyGen, lazyLoadImages, empty, DisplayAsToast, getQueryStringsFromUrl, moneyFormat}
