@@ -622,9 +622,8 @@ function getRequest(event) {
 
 function postRequest(event) {
   event.preventDefault();
-  var this_form = event.currentTarget; //In case there are more than 2 submit buttons in a form.
-
-  var submit_button = this_form.querySelector("input[type='submit']");
+  var this_form = event.currentTarget;
+  var submit_button = this_form.querySelector("input[type='submit']") || this_form.querySelector("button[type='submit']");
 
   if (this_form.querySelector(".div.success")) {
     this_form.querySelector(".div.success").remove();
@@ -714,7 +713,7 @@ function postRequest(event) {
       if (this_form.dataset.ext) {
         window.open(url, '_ext');
       } else {
-        window.open(url);
+        location.href = url;
       }
     } else {
       var _ref, _response$data$messag2;
