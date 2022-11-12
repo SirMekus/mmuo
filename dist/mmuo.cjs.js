@@ -288,68 +288,103 @@ function triggerFileChanger(e) {
   target.dispatchEvent(event);
 }
 
+function isImage(file) {
+  return file.type.split("/")[0] == 'image' ? true : false;
+}
+
+function defaultFormats() {
+  var _window$mmuo_accepted;
+
+  return (_window$mmuo_accepted = window.mmuo_acceptedDocs) !== null && _window$mmuo_accepted !== void 0 ? _window$mmuo_accepted : ["image/jpeg", "image/png", "image/gif", "image/webp"];
+}
+
+function acceptedFormats() {
+  var formats = defaultFormats();
+  var fileFormats = [];
+
+  for (var index in formats) {
+    fileFormats.push(formats[index].split("/")[1]);
+  }
+
+  return fileFormats.toString();
+}
+
 function uploadImage(e) {
-  var _window$acceptedDocs, _window$acceptedSize;
+  var _window$acceptedSize;
 
   var selectedFiles = e.currentTarget.files;
   var index = document.querySelectorAll(".remove-image").length;
   var preview_box_locator = e.currentTarget.getAttribute("data-preview");
   var preview_box = document.querySelector(".".concat(preview_box_locator));
-  var acceptedDocs = (_window$acceptedDocs = window.acceptedDocs) !== null && _window$acceptedDocs !== void 0 ? _window$acceptedDocs : ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  var acceptedDocs = defaultFormats();
   var acceptedSize = (_window$acceptedSize = window.acceptedSize) !== null && _window$acceptedSize !== void 0 ? _window$acceptedSize : 3228267;
+  var imageUploaded = false;
 
   for (var _i = 0; _i < selectedFiles.length; _i++) {
     var size = selectedFiles[_i].size;
     var type = selectedFiles[_i].type;
 
     if (!acceptedDocs.includes(type)) {
-      showCanvass("".concat(file[_i].name, " is unknown. Please upload an image file in JPG, PNG, GIF or WEBP format to continue"));
-      removeImage(_i);
+      showCanvass("".concat(selectedFiles[_i].name, " is unknown. Please upload an image or file in: ").concat(acceptedFormats(), " format to continue."));
+
+      if (isImage(selectedFiles[_i])) {
+        removePhoto(_i);
+      }
+
       break;
     }
 
     if (size > acceptedSize) {
       showCanvass("File size for ".concat(selectedFiles[_i].name, " too large. File must not be greater than ").concat((acceptedSize / 1024 / 1024).toFixed("0"), "MB"));
-      removeImage(_i);
+
+      if (isImage(selectedFiles[_i])) {
+        removePhoto(_i);
+      }
+
       break;
     }
 
-    var img = {
-      src: URL.createObjectURL(selectedFiles[_i]),
-      file: selectedFiles[_i],
-      index: index
-    };
-    var div = document.createElement('div');
-    div.className = 'div-for-this-photo me-2';
-    div.innerHTML = "<a style='float:clear;' class='btn btn-lg remove-image' data-entry='".concat(index, "'  href='#'><span>&times;</span></a><a href='#' data-fancybox='gallery' data-caption='how it will be displayed ").concat(_i, "' class='card'><img class='card-img-top' src='").concat(img.src, "' /> </a>");
-    preview_box.appendChild(div);
-    index++;
+    if (isImage(selectedFiles[_i])) {
+      imageUploaded = true;
+      var img = {
+        src: URL.createObjectURL(selectedFiles[_i]),
+        file: selectedFiles[_i],
+        index: index
+      };
+      var div = document.createElement('div');
+      div.className = 'div-for-this-photo me-2';
+      div.innerHTML = "<a style='float:clear;' class='btn btn-lg remove-image' data-entry='".concat(index, "'  href='#'><span>&times;</span></a><a href='#' data-fancybox='gallery' data-caption='how it will be displayed ").concat(_i, "' class='card'><img class='card-img-top' src='").concat(img.src, "' /> </a>");
+      preview_box.appendChild(div);
+      index++;
+    }
   }
 
-  if (document.getElementById("previously_uploaded") != null) {
-    var dt = new DataTransfer();
+  if (imageUploaded) {
+    if (document.getElementById("previously_uploaded") != null) {
+      var dt = new DataTransfer();
 
-    var _document$getElementB = document.getElementById("previously_uploaded"),
-        files = _document$getElementB.files;
+      var _document$getElementB = document.getElementById("previously_uploaded"),
+          files = _document$getElementB.files;
 
-    for (var i = 0; i < files.length; i++) {
-      var merged_file = files[i];
-      dt.items.add(merged_file);
+      for (var i = 0; i < files.length; i++) {
+        var merged_file = files[i];
+        dt.items.add(merged_file);
+      }
+
+      var current_file = e.currentTarget.files;
+
+      for (var p = 0; p < current_file.length; p++) {
+        var _merged_file = current_file[p];
+        dt.items.add(_merged_file);
+      }
+
+      e.currentTarget.files = dt.files;
+      document.getElementById("previously_uploaded").remove(); // var found = document.querySelectorAll(".remove-image").length - 1
+
+      document.querySelectorAll(".remove-image").forEach(function (currentValue, currentIndex, listObj) {
+        listObj[currentIndex].setAttribute('data-entry', currentIndex);
+      });
     }
-
-    var current_file = e.currentTarget.files;
-
-    for (var p = 0; p < current_file.length; p++) {
-      var _merged_file = current_file[p];
-      dt.items.add(_merged_file);
-    }
-
-    e.currentTarget.files = dt.files;
-    document.getElementById("previously_uploaded").remove();
-    document.querySelectorAll(".remove-image").length - 1;
-    document.querySelectorAll(".remove-image").forEach(function (currentValue, currentIndex, listObj) {
-      listObj[currentIndex].setAttribute('data-entry', currentIndex);
-    });
   }
 }
 
@@ -361,10 +396,10 @@ function removeImage(event) {
   var input = document.querySelector('.image');
 
   for (var i = 0; i < input.files.length; i++) {
-    var _file = input.files[i];
+    var file = input.files[i];
 
     if (index != i) {
-      dt.items.add(_file); // here you exclude the file. thus removing it.
+      dt.items.add(file); // here you exclude the file. thus removing it.
     }
   }
 
@@ -373,6 +408,27 @@ function removeImage(event) {
   currentButton.parentElement.remove();
   document.querySelectorAll(".remove-image").forEach(function (currentValue, currentIndex, listObj) {
     listObj[currentIndex].setAttribute('data-entry', currentIndex);
+  });
+}
+
+function removePhoto(index) {
+  var dt = new DataTransfer();
+  var input = document.getElementById('image');
+  var files = input.files;
+
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    if (index !== i) dt.items.add(file); // here you exclude the file. thus removing it.
+  }
+
+  input.files = dt.files; // Assign the updates list
+
+  document.querySelectorAll(".remove-image").forEach(function (currentValue, currentIndex, listObj) {
+    listObj[currentIndex].setAttribute('data-entry', currentIndex);
+  });
+  var found = $(document).find('.remove-image').length - 1;
+  $(document).find('.remove-image').each(function (k) {
+    $(this).attr('data-entry', found - k);
   });
 }
 

@@ -33,6 +33,26 @@ function triggerFileChanger(e) {
     target.dispatchEvent(event);
 }
 
+function isImage(file){
+    return (file.type.split("/")[0] == 'image') ? true : false;
+}
+
+function defaultFormats(){
+    return window.mmuo_acceptedDocs ?? ["image/jpeg", "image/png", "image/gif", "image/webp"]
+}
+
+function acceptedFormats(){
+    var formats = defaultFormats()
+    
+    let fileFormats = []
+    
+    for(var index in formats){
+        fileFormats.push(formats[index].split("/")[1])
+    }
+    
+    return fileFormats.toString()
+}
+
 function uploadImage(e) {
     var selectedFiles = e.currentTarget.files
 
@@ -42,66 +62,80 @@ function uploadImage(e) {
 
     var preview_box = document.querySelector(`.${preview_box_locator}`);
 
-    const acceptedDocs = window.acceptedDocs ?? ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    const acceptedDocs = defaultFormats();
 
     const acceptedSize = window.acceptedSize ?? 3228267;
+
+    let imageUploaded = false
 
     for (let i = 0; i < selectedFiles.length; i++) {
         var size = selectedFiles[i].size;
         var type = selectedFiles[i].type;
 
         if (!acceptedDocs.includes(type)) {
-            showCanvass(`${file[i].name} is unknown. Please upload an image file in JPG, PNG, GIF or WEBP format to continue`);
-            removeImage(i);
+            showCanvass(`${selectedFiles[i].name} is unknown. Please upload an image or file in: ${acceptedFormats()} format to continue.`);
+            
+            if(isImage(selectedFiles[i])){
+                removePhoto(i);
+            }
+            
             break;
         }
 
         if (size > acceptedSize) {
             showCanvass(`File size for ${selectedFiles[i].name} too large. File must not be greater than ${(acceptedSize /1024/1024).toFixed("0")}MB`
             );
-            removeImage(i);
+            if(isImage(selectedFiles[i])){
+                removePhoto(i);
+            }
             break;
         }
 
-        let img = {
-            src: URL.createObjectURL(selectedFiles[i]),
-            file: selectedFiles[i],
-            index:index
-        };
+        if(isImage(selectedFiles[i])){
+            imageUploaded = true
 
-        let div = document.createElement('div');
-        div.className = 'div-for-this-photo me-2';
-        div.innerHTML = `<a style='float:clear;' class='btn btn-lg remove-image' data-entry='${index}'  href='#'><span>&times;</span></a><a href='#' data-fancybox='gallery' data-caption='how it will be displayed ${i}' class='card'><img class='card-img-top' src='${img.src}' /> </a>`;
+            let img = {
+                src: URL.createObjectURL(selectedFiles[i]),
+                file: selectedFiles[i],
+                index:index
+            };
 
-        preview_box.appendChild(div);
+            let div = document.createElement('div');
+            div.className = 'div-for-this-photo me-2';
+            div.innerHTML = `<a style='float:clear;' class='btn btn-lg remove-image' data-entry='${index}'  href='#'><span>&times;</span></a><a href='#' data-fancybox='gallery' data-caption='how it will be displayed ${i}' class='card'><img class='card-img-top' src='${img.src}' /> </a>`;
 
-        index++
+            preview_box.appendChild(div);
+
+            index++
+        }
     }
 
-    if (document.getElementById("previously_uploaded") != null) {
-        const dt = new DataTransfer();
-        const { files } = document.getElementById("previously_uploaded");
-        for (var i = 0; i < files.length; i++) {
-            const merged_file = files[i];
-            dt.items.add(merged_file);
-        }
+    if(imageUploaded){
+        if (document.getElementById("previously_uploaded") != null) {
+            const dt = new DataTransfer();
+            const { files } = document.getElementById("previously_uploaded");
+            for (var i = 0; i < files.length; i++) {
+                const merged_file = files[i];
+                dt.items.add(merged_file);
+            }
 
-        const current_file = e.currentTarget.files;
+            const current_file = e.currentTarget.files;
 
-        for (var p = 0; p < current_file.length; p++) {
-            const merged_file = current_file[p];
-            dt.items.add(merged_file);
-        }
+            for (var p = 0; p < current_file.length; p++) {
+                const merged_file = current_file[p];
+                dt.items.add(merged_file);
+            }
 
-        e.currentTarget.files = dt.files;
+            e.currentTarget.files = dt.files;
 
-        document.getElementById("previously_uploaded").remove();
+            document.getElementById("previously_uploaded").remove();
 
-        var found = document.querySelectorAll(".remove-image").length - 1
+            // var found = document.querySelectorAll(".remove-image").length - 1
         
-        document.querySelectorAll(".remove-image").forEach(function(currentValue, currentIndex, listObj) {
-            listObj[currentIndex].setAttribute('data-entry', currentIndex)
-        })
+            document.querySelectorAll(".remove-image").forEach(function(currentValue, currentIndex, listObj) {
+                listObj[currentIndex].setAttribute('data-entry', currentIndex)
+            })
+        }
     }
 }
 
@@ -155,6 +189,6 @@ function removePhoto(index)
 	$(document).find('.remove-image').each(function (k) {
 			    $(this).attr('data-entry', found - k)
 		    })
-	}
+}
 
 export { triggerFileChanger, removeImage, uploadImage, removePhoto };

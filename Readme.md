@@ -215,6 +215,14 @@ You can control the size of the image (so it doesn't display too large or occupy
 </div>
 ```
 
+To explicitly specify allowed file formats for your application simply set a global/window variable array with the allowed formats as items in the array. Only files that conform to formats in the array will be recognised. Example:
+
+```javascript
+window.mmuo_acceptedDocs = ["image/jpeg", "image/png", "image/gif", "image/webp", "audio/mpeg"]
+```
+
+> It is important to note that the variable's name should be `mmuo_acceptedDocs`.
+
 2. ## Password Toogling
 
 Toggle between showing and hiding a password.
