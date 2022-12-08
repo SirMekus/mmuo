@@ -930,40 +930,90 @@
       }, 1000);
     }
 
-    function registerEventListeners() {
+    function triggerFileChangerEvent() {
       on(".select-photo", "click", triggerFileChanger);
+    }
+
+    function uploadImageEvent() {
       on(".image", "change", uploadImage);
+    }
+
+    function removeImageEvent() {
       on(".remove-image", "click", removeImage);
+    }
+
+    function togglePasswordVisibilityEvent() {
       on(".password-visibility", "click", togglePasswordVisibility);
+    }
+
+    function checkIfPasswordsMatchEvent() {
       on(".password-checker", "focusout", checkIfPasswordsMatch);
+    }
+
+    function generatePasswordEvent() {
       on(".gen-password", "click", generatePassword);
-      on(".open-as-modal", "click", openAsModal); //function to run when user attempts to run any feature that first needs coonfirmation. This replaces the native "alert" prompt of browsers.
+    }
 
+    function openAsModalEvent() {
+      on(".open-as-modal", "click", openAsModal);
+    }
+
+    function alertBeforeRunningEvent() {
       on(".pre-run", "click", alertBeforeRunning);
-      on(".run-get-request", "click", getRequest); //General for all pages that use a POST submit method especially.
+    }
 
+    function getRequestEvent() {
+      on(".run-get-request", "click", getRequest);
+    }
+
+    function postRequestEvent() {
       on("#form .form", "submit", postRequest);
+    }
+
+    function registerEventListeners() {
+      triggerFileChangerEvent();
+      uploadImageEvent();
+      removeImageEvent();
+      togglePasswordVisibilityEvent();
+      checkIfPasswordsMatchEvent();
+      generatePasswordEvent();
+      openAsModalEvent(); //function to run when user attempts to run any feature that first needs coonfirmation. This replaces the native "alert" prompt of browsers.
+
+      alertBeforeRunningEvent();
+      getRequestEvent(); //General for all pages that use a POST submit method especially.
+
+      postRequestEvent();
     }
 
     exports.DisplayAsToast = DisplayAsToast;
     exports.alertBeforeRunning = alertBeforeRunning;
+    exports.alertBeforeRunningEvent = alertBeforeRunningEvent;
     exports.checkIfPasswordsMatch = checkIfPasswordsMatch;
+    exports.checkIfPasswordsMatchEvent = checkIfPasswordsMatchEvent;
     exports.empty = empty;
     exports.generatePassword = generatePassword;
+    exports.generatePasswordEvent = generatePasswordEvent;
     exports.getKey = getKey;
     exports.getQueryStringsFromUrl = getQueryStringsFromUrl;
     exports.getRequest = getRequest;
+    exports.getRequestEvent = getRequestEvent;
     exports.keyGen = keyGen;
     exports.lazyLoadImages = lazyLoadImages;
     exports.moneyFormat = moneyFormat;
     exports.on = on;
+    exports.openAsModalEvent = openAsModalEvent;
     exports.postRequest = postRequest;
+    exports.postRequestEvent = postRequestEvent;
     exports.registerEventListeners = registerEventListeners;
+    exports.removeImageEvent = removeImageEvent;
     exports.removeSpinner = removeSpinner;
     exports.showAlert = showAlert;
     exports.showCanvass = showCanvass;
     exports.showSpinner = showSpinner;
     exports.togglePasswordVisibility = togglePasswordVisibility;
+    exports.togglePasswordVisibilityEvent = togglePasswordVisibilityEvent;
+    exports.triggerFileChangerEvent = triggerFileChangerEvent;
+    exports.uploadImageEvent = uploadImageEvent;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

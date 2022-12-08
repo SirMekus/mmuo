@@ -924,19 +924,59 @@ function on(selector, event, funct) {
   }, 1000);
 }
 
-function registerEventListeners() {
+function triggerFileChangerEvent() {
   on(".select-photo", "click", triggerFileChanger);
+}
+
+function uploadImageEvent() {
   on(".image", "change", uploadImage);
+}
+
+function removeImageEvent() {
   on(".remove-image", "click", removeImage);
+}
+
+function togglePasswordVisibilityEvent() {
   on(".password-visibility", "click", togglePasswordVisibility);
+}
+
+function checkIfPasswordsMatchEvent() {
   on(".password-checker", "focusout", checkIfPasswordsMatch);
+}
+
+function generatePasswordEvent() {
   on(".gen-password", "click", generatePassword);
-  on(".open-as-modal", "click", openAsModal); //function to run when user attempts to run any feature that first needs coonfirmation. This replaces the native "alert" prompt of browsers.
+}
 
+function openAsModalEvent() {
+  on(".open-as-modal", "click", openAsModal);
+}
+
+function alertBeforeRunningEvent() {
   on(".pre-run", "click", alertBeforeRunning);
-  on(".run-get-request", "click", getRequest); //General for all pages that use a POST submit method especially.
+}
 
+function getRequestEvent() {
+  on(".run-get-request", "click", getRequest);
+}
+
+function postRequestEvent() {
   on("#form .form", "submit", postRequest);
 }
 
-export { DisplayAsToast, alertBeforeRunning, checkIfPasswordsMatch, empty, generatePassword, getKey, getQueryStringsFromUrl, getRequest, keyGen, lazyLoadImages, moneyFormat, on, postRequest, registerEventListeners, removeSpinner, showAlert, showCanvass, showSpinner, togglePasswordVisibility };
+function registerEventListeners() {
+  triggerFileChangerEvent();
+  uploadImageEvent();
+  removeImageEvent();
+  togglePasswordVisibilityEvent();
+  checkIfPasswordsMatchEvent();
+  generatePasswordEvent();
+  openAsModalEvent(); //function to run when user attempts to run any feature that first needs coonfirmation. This replaces the native "alert" prompt of browsers.
+
+  alertBeforeRunningEvent();
+  getRequestEvent(); //General for all pages that use a POST submit method especially.
+
+  postRequestEvent();
+}
+
+export { DisplayAsToast, alertBeforeRunning, alertBeforeRunningEvent, checkIfPasswordsMatch, checkIfPasswordsMatchEvent, empty, generatePassword, generatePasswordEvent, getKey, getQueryStringsFromUrl, getRequest, getRequestEvent, keyGen, lazyLoadImages, moneyFormat, on, openAsModalEvent, postRequest, postRequestEvent, registerEventListeners, removeImageEvent, removeSpinner, showAlert, showCanvass, showSpinner, togglePasswordVisibility, togglePasswordVisibilityEvent, triggerFileChangerEvent, uploadImageEvent };

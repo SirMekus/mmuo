@@ -28,25 +28,68 @@ function on(selector, event, funct) {
     }, 1000);
 }
 
-function registerEventListeners() {
+function triggerFileChangerEvent(){
     on(".select-photo", "click", triggerFileChanger);
+}
+
+function uploadImageEvent(){
     on(".image", "change", uploadImage);
+}
+
+function removeImageEvent(){
     on(".remove-image", "click", removeImage);
+}
+
+function togglePasswordVisibilityEvent(){
     on(".password-visibility", "click", togglePasswordVisibility);
+}
 
+function checkIfPasswordsMatchEvent(){
     on(".password-checker", "focusout", checkIfPasswordsMatch);
+}
 
+function generatePasswordEvent(){
     on(".gen-password", "click", generatePassword);
+}
 
+function openAsModalEvent(){
     on(".open-as-modal", "click", openAsModal);
+}
 
-    //function to run when user attempts to run any feature that first needs coonfirmation. This replaces the native "alert" prompt of browsers.
+function alertBeforeRunningEvent(){
     on(".pre-run", "click", alertBeforeRunning);
+}
 
+function getRequestEvent(){
     on(".run-get-request", "click", getRequest);
+}
 
-    //General for all pages that use a POST submit method especially.
+function postRequestEvent(){
     on("#form .form", "submit", postRequest);
 }
 
-export { registerEventListeners, on };
+function registerEventListeners() {
+    triggerFileChangerEvent()
+
+    uploadImageEvent()
+
+    removeImageEvent()
+
+    togglePasswordVisibilityEvent()
+
+    checkIfPasswordsMatchEvent()
+
+    generatePasswordEvent()
+
+    openAsModalEvent();
+
+    //function to run when user attempts to run any feature that first needs coonfirmation. This replaces the native "alert" prompt of browsers.
+    alertBeforeRunningEvent()
+
+    getRequestEvent()
+
+    //General for all pages that use a POST submit method especially.
+    postRequestEvent()
+}
+
+export { registerEventListeners, on, triggerFileChangerEvent, uploadImageEvent, removeImageEvent, togglePasswordVisibilityEvent, checkIfPasswordsMatchEvent, generatePasswordEvent, openAsModalEvent, alertBeforeRunningEvent, getRequestEvent, postRequestEvent };

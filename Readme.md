@@ -11,15 +11,39 @@ Especially for AJAX requests, you don't have to create AJAX scripts/files for di
 - Exposes some AJAX loading indicator functions which you can use for your project
 - Lazy-load Image(s)
 
-## Installation
+## Table of Contents
+
+- [Installation and Usage](#installation-and-usage)
+- [Pre-built Features](#pre-built-features)
+- [Registering Events](#registering-events)
+- [Image Upload](#1-image-upload)
+  - [Via Trigger](#via-trigger)
+  - [Via Normal File Input](#via-normal-file-input)
+- [Password Toogling](#2-password-toogling)
+- [Check If Two Passwords Match](#3-check-if-two-passwords-match)
+- [Generating Password](#4-generating-password)
+- [Ask Before Running A Link](#5-ask-before-running-a-link)
+- [Running AJAX GET Requests Via Links](#6-running-ajax-get-requests-via-links)
+- [Running AJAX GET Requests In General](#7-running-ajax-requests-in-general)
+  - [Returning Response](#returning-response)
+- [Opening Page As Modal](#8-opening-page-as-modal)
+- [Bonus](#bonus)  
+  - [Emitting Events](#emitting-events)
+  - [Utility Functions](#utility-functions)
+    - [Displaying Spinner](#displaying-spinner)
+    - [Displaying Pop Up Or Alert](#displaying-pop-up-or-alert)
+    - [Lazy-loading Images](#lazy-loading-images)
+    - [Bottom-To-Top Popup](#bottom-to-top-popup)
+
+## Installation and Usage
 
 To get started all you need to do is:
 
 ```bash
-$ npm install mmuo
+npm install mmuo
 ```
 
-and you're in. The package exposes a `registerEventListeners()` function which already has some event listeners and classes for you to just dive right in and use. Simply import the function into your project and use right away. Example:
+and you're in. The package exposes a `registerEventListeners()` function which already has some event listeners and classes for you to just dive right in. Simply import the function into your project and use right away. Example:
 
 ```javascript
 import {registerEventListeners} from "mmuo"
@@ -76,6 +100,23 @@ window.bootstrap =  bootstrap
 window.axios = axios;
 ```
 
+Please note that the `registerEventListeners` registers multiple events in the DOm. However, there may be case(s) where you just need to register or use a single event - for instance, only AJAX POST/Form request. In this case you should just import the needed event only. The event name is usually the function name suffixed with `'Event'`.
+
+For instance, to use only the `triggerFileChanger` event in your project you will do:
+
+```javascript
+import {triggerFileChangerEvent} from "mmuo"
+
+//Always nice to register events when the DOM has been fully loaded
+window.addEventListener("DOMContentLoaded", function() {
+    triggerFileChangerEvent()
+});
+```
+
+It will import the function itself and also register the event so you don't have to do anything at all.
+
+## Pre-built Features
+
 Please note that in using this function some classes and/or ID's have already been defined and registered so all you have to do is assign any of these classes or ID's to your HTML element and you're good to go. The functions are already defined (in the `registerEventListeners` function imported earlier) and you can use them on your own if you want to create or listen to custom events on your own. The workflow, should you choose to register events on your own with a different class/ID name, should be the same:
 
 | Class/ID | Event | Function | Description
@@ -93,8 +134,6 @@ Please note that in using this function some classes and/or ID's have already be
 All the above functions can simply be imported and used in your project.
 
 > Note that these are just class/ID names you can use on the fly without any configuration and that these names, if they conflict with any class/ID name already in use, can be changed to your preference. However, you will have to manually register your events.
-
-
 > Also note that proper styling is done with Bootstrap so you may want to include it in your project
 
 ## Registering Events
@@ -162,7 +201,7 @@ If you will like to use our function(s) (as defined in the table above) then you
 
 Please note that the class names specified here are optional and you are free to use your own class names. The difference is that you will have to register your events yourself using any of our functions defined in the table above.
 
-1. ## Image Upload
+## 1 Image Upload
 
 - ## Via Trigger
 
@@ -223,7 +262,7 @@ window.mmuo_acceptedDocs = ["image/jpeg", "image/png", "image/gif", "image/webp"
 
 > It is important to note that the variable's name should be `mmuo_acceptedDocs`.
 
-2. ## Password Toogling
+## 2. Password Toogling
 
 Toggle between showing and hiding a password.
 
@@ -239,7 +278,7 @@ Toggle between showing and hiding a password.
 </div>
 ```
 
-3. ## Check If Two Passwords Match
+## 3. Check If Two Passwords Match
 
 Just make sure they (inputs) have the `name` attributes set to **"password"** and **"password_confirmation"** respectively alongside the **"password-checker"** class name
 
@@ -258,7 +297,7 @@ Just make sure they (inputs) have the `name` attributes set to **"password"** an
 </div>
 ```
 
-4. ## Generating Password
+## 4. Generating Password
 
 Give the button a `gen-password` class and place it to the input element you want it to be displayed in. Example:
 
@@ -307,7 +346,7 @@ The `data-strength=*` attribute can have any of the following values:
 
 If not specified, or an invalid value is used, the default is **decent_pw**
 
-5. ## Ask Before Running A Link
+## 5. Ask Before Running A Link
 
 ```html
 <a class="pre-run" data-caption="Would you like to buy me Shawama or Nkwobi as well?" data-classname="run-get-request" data-bc="logout" href="https://www.webloit.com">Shop Now</a>
@@ -323,13 +362,13 @@ The **"pre-run"** (but you can give it a different name) class is the most impor
 
 Note that these are optional and that there are defaults in place already such that you can just simply do:
 
-```
+```html
 <a class="pre-run" href="https://www.webloit.com">Shop Now</a>
 ```
 
 And it will mean the same thing using our defined values.
 
-6. ## Running AJAX Requests Via Links (GET Requests)
+## 6. Running AJAX GET Requests Via Links
 
 A simple one looks just like this:
 
@@ -353,9 +392,9 @@ Or with adding an event:
 href="/delete-user">Remove</a>
 ```
 
-7. ## Running AJAX Requests Via Forms (POST,GET,PUT,DELETE,etc Requests)
+## 7. Running AJAX Requests In General
 
-We advice that each input type be placed within a `div` for proper styling and alignment. If you use our `registerEventListeners()` function then make sure it has the id or class attribute set to `form`. Example:
+We advice that each input type be placed within a `div` for proper styling and alignment. If you use our `registerEventListeners()` function then make sure the `form` has the id or class attribute set to `form`. Example:
 
 ```html
 <form action="submit" id="form" method="post">
@@ -525,7 +564,7 @@ If you want the link to be opened on a different tab then you should add a `data
 
 For proper message styling and presentation we use the **HTTP status** to detect error or failed request(s) so when returning response(s) we advice you use appropriate **HTTP status header(s)**. No need to append the "Status Code" as property in the result in the reward because we don't use it.
 
-8. ## OPENING PAGE AS MODAL
+## 8. Opening Page As Modal
 
 You may want to open a page (via a link) as a modal. This page should typically only contain elements without the `html` or `body` tag; for instance, a form. If you imported the `registerEventListeners` function of this package in your project there is already an event listener for such. All you need to do is give an `a` element the `open-as-modal` class and you're good to go (Or, import the function itself - `openAsModal` - and attach to your custom event listener (if you didn't and will like to use some of our functions itself)) Example:
 
@@ -600,7 +639,7 @@ axios.get("http://www.example.com").then((response) => {
 
 To give your spinner a theme color you should define a CSS `--color-theme` variable in your project
 
-## Displaying Pop Up (or Alert)
+## Displaying Pop Up Or Alert
 
 This is typically used to warn or instruct a user after clicking a link before carrying the action of the link (consider it a replacement to browser's `alert()`). Simply use our `showAlert` function like so:
 
@@ -633,7 +672,7 @@ window.addEventListener("DOMContentLoaded", function() {
 });
 ```
 
-## Popup From Bottom-To-Top
+## Bottom-To-Top Popup
 
 You may want to display a message to the user after/before an action and will like it to appear from below the user's screen, simply do:
 

@@ -1,5 +1,5 @@
-import { on, registerEventListeners } from "./src/EventListeners.js"
+import { on, registerEventListeners, triggerFileChangerEvent, uploadImageEvent, removeImageEvent, togglePasswordVisibilityEvent, checkIfPasswordsMatchEvent, generatePasswordEvent, openAsModalEvent, alertBeforeRunningEvent, getRequestEvent, postRequestEvent } from "./src/EventListeners.js"
 import { togglePasswordVisibility, checkIfPasswordsMatch, generatePassword, alertBeforeRunning, getRequest, postRequest } from "./src/EventCallbacks.js"
 import {showCanvass, showSpinner, removeSpinner, showAlert, lazyLoadImages, DisplayAsToast, getQueryStringsFromUrl, getKey, empty, keyGen, moneyFormat} from "./src/helper.js"
 
-export {on, registerEventListeners, togglePasswordVisibility, checkIfPasswordsMatch, generatePassword, alertBeforeRunning, getRequest, postRequest, showCanvass, showSpinner, removeSpinner, showAlert, lazyLoadImages, DisplayAsToast, getQueryStringsFromUrl, getKey, empty, keyGen, moneyFormat}
+export {on, registerEventListeners, triggerFileChangerEvent, uploadImageEvent, removeImageEvent, togglePasswordVisibilityEvent, checkIfPasswordsMatchEvent, generatePasswordEvent, openAsModalEvent, alertBeforeRunningEvent, getRequestEvent, postRequestEvent, togglePasswordVisibility, checkIfPasswordsMatch, generatePassword, alertBeforeRunning, getRequest, postRequest, showCanvass, showSpinner, removeSpinner, showAlert, lazyLoadImages, DisplayAsToast, getQueryStringsFromUrl, getKey, empty, keyGen, moneyFormat}
