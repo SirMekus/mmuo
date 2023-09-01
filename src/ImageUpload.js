@@ -38,7 +38,7 @@ function isImage(file){
 }
 
 function defaultFormats(){
-    return localStorage.getItem('mmuo_formats') ?? ["image/jpeg", "image/png", "image/gif", "image/webp"]
+    return localStorage.getItem('mmuo_formats') ? JSON.parse(localStorage.getItem('mmuo_formats')) : ["image/jpeg", "image/png", "image/gif", "image/webp"]
 }
 
 function acceptedFormats(){
@@ -54,7 +54,7 @@ function acceptedFormats(){
 }
 
 function setImageUploadConfig(config){
-    localStorage.setItem('mmuo_formats', config.formats ?? defaultFormats())
+    localStorage.setItem('mmuo_formats', config.formats ? JSON.stringify(config.formats) : defaultFormats())
     localStorage.setItem('mmuo_size', config.size ?? 3228267)
 }
 

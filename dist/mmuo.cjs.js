@@ -292,9 +292,7 @@ function isImage(file) {
 }
 
 function defaultFormats() {
-  var _localStorage$getItem;
-
-  return (_localStorage$getItem = localStorage.getItem('mmuo_formats')) !== null && _localStorage$getItem !== void 0 ? _localStorage$getItem : ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  return localStorage.getItem('mmuo_formats') ? JSON.parse(localStorage.getItem('mmuo_formats')) : ["image/jpeg", "image/png", "image/gif", "image/webp"];
 }
 
 function acceptedFormats() {
@@ -309,21 +307,21 @@ function acceptedFormats() {
 }
 
 function setImageUploadConfig(config) {
-  var _config$formats, _config$size;
+  var _config$size;
 
-  localStorage.setItem('mmuo_formats', (_config$formats = config.formats) !== null && _config$formats !== void 0 ? _config$formats : defaultFormats());
+  localStorage.setItem('mmuo_formats', config.formats ? JSON.stringify(config.formats) : defaultFormats());
   localStorage.setItem('mmuo_size', (_config$size = config.size) !== null && _config$size !== void 0 ? _config$size : 3228267);
 }
 
 function uploadImage(e) {
-  var _localStorage$getItem2;
+  var _localStorage$getItem;
 
   var selectedFiles = e.currentTarget.files;
   var index = document.querySelectorAll(".remove-image").length;
   var preview_box_locator = e.currentTarget.getAttribute("data-preview");
   var preview_box = document.querySelector(".".concat(preview_box_locator));
   var acceptedDocs = defaultFormats();
-  var acceptedSize = (_localStorage$getItem2 = localStorage.getItem('mmuo_formats')) !== null && _localStorage$getItem2 !== void 0 ? _localStorage$getItem2 : 3228267;
+  var acceptedSize = (_localStorage$getItem = localStorage.getItem('mmuo_formats')) !== null && _localStorage$getItem !== void 0 ? _localStorage$getItem : 3228267;
   var imageUploaded = false;
 
   for (var _i = 0; _i < selectedFiles.length; _i++) {
