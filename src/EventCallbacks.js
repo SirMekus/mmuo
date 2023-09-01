@@ -196,18 +196,19 @@ function getRequest (event) {
 
         return
     }
-
-    axios.request({
-        url: href,
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-        withCredentials: true
-      }).then((response) => {
-        document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, { detail: response }))
-    }).catch((error) => {
-        showCanvass("<div class='text-danger'>"+error.response.data.message +"</div>")
-    }).then(() => {
-        removeSpinner()
-    })
+    else{
+        axios.request({
+            url: href,
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            withCredentials: true
+        }).then((response) => {
+            document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, { detail: response }))
+        }).catch((error) => {
+            showCanvass("<div class='text-danger'>"+error.response.data.message +"</div>")
+        }).then(() => {
+            removeSpinner()
+        })
+    }
 }
 
 function postRequest (event) {

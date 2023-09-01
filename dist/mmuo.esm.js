@@ -127,11 +127,10 @@ function getKey() {
 
     default:
       return keyGen(8, true, true, true, false, false);
-    //throw Error(`No such strength "${strength}"`);
   }
 }
 
-function showCanvass($msg) {
+function showCanvass(msg) {
   //Just in case one have been created already, we remove it
   if (document.querySelector("#offcanvasBottom") != null) {
     document.querySelector("#offcanvasBottom").remove();
@@ -142,7 +141,7 @@ function showCanvass($msg) {
   div.id = 'offcanvasBottom';
   div.setAttribute('tabindex', -1);
   div.setAttribute('aria-labelledby', 'offcanvasBottomLabel');
-  div.innerHTML = "<div class='offcanvas-header d-flex justify-content-center'>\n        <h5 class='offcanvas-title text-center' id='offcanvasBottomLabel'>".concat($msg, "</h5>\n      </div>");
+  div.innerHTML = "<div class='offcanvas-header d-flex justify-content-center'>\n        <h5 class='offcanvas-title text-center' id='offcanvasBottomLabel'>".concat(msg, "</h5>\n      </div>");
   div.style.height = "80px";
   document.body.appendChild(div);
   new bootstrap.Offcanvas(document.getElementById("offcanvasBottom")).show();
@@ -289,9 +288,9 @@ function isImage(file) {
 }
 
 function defaultFormats() {
-  var _window$mmuo_accepted;
+  var _localStorage$getItem;
 
-  return (_window$mmuo_accepted = window.mmuo_acceptedDocs) !== null && _window$mmuo_accepted !== void 0 ? _window$mmuo_accepted : ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  return (_localStorage$getItem = localStorage.getItem('mmuo_formats')) !== null && _localStorage$getItem !== void 0 ? _localStorage$getItem : ["image/jpeg", "image/png", "image/gif", "image/webp"];
 }
 
 function acceptedFormats() {
@@ -305,15 +304,22 @@ function acceptedFormats() {
   return fileFormats.toString();
 }
 
+function setImageUploadConfig(config) {
+  var _config$formats, _config$size;
+
+  localStorage.setItem('mmuo_formats', (_config$formats = config.formats) !== null && _config$formats !== void 0 ? _config$formats : defaultFormats());
+  localStorage.setItem('mmuo_size', (_config$size = config.size) !== null && _config$size !== void 0 ? _config$size : 3228267);
+}
+
 function uploadImage(e) {
-  var _window$acceptedSize;
+  var _localStorage$getItem2;
 
   var selectedFiles = e.currentTarget.files;
   var index = document.querySelectorAll(".remove-image").length;
   var preview_box_locator = e.currentTarget.getAttribute("data-preview");
   var preview_box = document.querySelector(".".concat(preview_box_locator));
   var acceptedDocs = defaultFormats();
-  var acceptedSize = (_window$acceptedSize = window.acceptedSize) !== null && _window$acceptedSize !== void 0 ? _window$acceptedSize : 3228267;
+  var acceptedSize = (_localStorage$getItem2 = localStorage.getItem('mmuo_formats')) !== null && _localStorage$getItem2 !== void 0 ? _localStorage$getItem2 : 3228267;
   var imageUploaded = false;
 
   for (var _i = 0; _i < selectedFiles.length; _i++) {
@@ -653,23 +659,23 @@ function getRequest(event) {
     }));
     removeSpinner();
     return;
+  } else {
+    axios.request({
+      url: href,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      withCredentials: true
+    }).then(function (response) {
+      document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, {
+        detail: response
+      }));
+    }).catch(function (error) {
+      showCanvass("<div class='text-danger'>" + error.response.data.message + "</div>");
+    }).then(function () {
+      removeSpinner();
+    });
   }
-
-  axios.request({
-    url: href,
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest'
-    },
-    withCredentials: true
-  }).then(function (response) {
-    document.dispatchEvent(new CustomEvent(clickedLink.dataset.bc, {
-      detail: response
-    }));
-  }).catch(function (error) {
-    showCanvass("<div class='text-danger'>" + error.response.data.message + "</div>");
-  }).then(function () {
-    removeSpinner();
-  });
 }
 
 function postRequest(event) {
@@ -979,4 +985,4 @@ function registerEventListeners() {
   postRequestEvent();
 }
 
-export { DisplayAsToast, alertBeforeRunning, alertBeforeRunningEvent, checkIfPasswordsMatch, checkIfPasswordsMatchEvent, empty, generatePassword, generatePasswordEvent, getKey, getQueryStringsFromUrl, getRequest, getRequestEvent, keyGen, lazyLoadImages, moneyFormat, on, openAsModalEvent, postRequest, postRequestEvent, registerEventListeners, removeImageEvent, removeSpinner, showAlert, showCanvass, showSpinner, togglePasswordVisibility, togglePasswordVisibilityEvent, triggerFileChangerEvent, uploadImageEvent };
+export { DisplayAsToast, alertBeforeRunning, alertBeforeRunningEvent, checkIfPasswordsMatch, checkIfPasswordsMatchEvent, checkParent, empty, generatePassword, generatePasswordEvent, getKey, getQueryStringsFromUrl, getRequest, getRequestEvent, insertAfter, keyGen, lazyLoadImages, moneyFormat, on, openAsModalEvent, postRequest, postRequestEvent, registerEventListeners, removeElement, removeImageEvent, removeSpinner, setImageUploadConfig, showAlert, showCanvass, showSpinner, togglePasswordVisibility, togglePasswordVisibilityEvent, triggerFileChangerEvent, uploadImageEvent };

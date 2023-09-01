@@ -1,6 +1,6 @@
 {
   "name": "mmuo",
-  "version": "1.5.5",
+  "version": "1.6.1",
   "description": "A native javascript library for making AJAX requests, alternative to native browser \"alert()\" function, lazy-loading images, for image/file upload and many other utility features",
   "main": "dist/mmuo.cjs.js",
   "module": "dist/mmuo.esm.js",
@@ -14,7 +14,7 @@
   "author": "Emeka Ohakwe <SirMekus; Uncle E> (https://www.linkedin.com/in/sirmekus)",
   "license": "MIT",
   "peerDependencies": {
-    "axios": "^0.*"
+    "axios": ">=0.*"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",
@@ -25,7 +25,6 @@
     "rollup-plugin-node-resolve": "^5.2.0"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ]
 }

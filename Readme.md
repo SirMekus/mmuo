@@ -254,13 +254,16 @@ You can control the size of the image (so it doesn't display too large or occupy
 </div>
 ```
 
-To explicitly specify allowed file formats for your application simply set a global/window variable array with the allowed formats as items in the array. Only files that conform to formats in the array will be recognised. Example:
+To explicitly specify allowed file formats (and/or file size) for your application simply set it via the `setImageUploadConfig()` function. Only files that conform to formats in the array will be recognised. Example:
 
 ```javascript
-window.mmuo_acceptedDocs = ["image/jpeg", "image/png", "image/gif", "image/webp", "audio/mpeg"]
-```
+import {setImageUploadConfig} from "mmuo"
 
-> It is important to note that the variable's name should be `mmuo_acceptedDocs`.
+setImageUploadConfig({
+    formats:["image/jpeg", "image/png", "image/gif", "image/webp", "audio/mpeg"],
+    size:32132212
+})
+```
 
 ## 2. Password Toogling
 

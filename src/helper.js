@@ -106,11 +106,10 @@ function getKey(strength = null) {
             return keyGen(29, false, false, false, false, true);
         default:
             return keyGen(8, true, true, true, false, false);
-        //throw Error(`No such strength "${strength}"`);
     }
 }
 
-function showCanvass($msg) {
+function showCanvass(msg) {
     //Just in case one have been created already, we remove it
     if(document.querySelector("#offcanvasBottom") != null){
     document.querySelector("#offcanvasBottom").remove();
@@ -122,7 +121,7 @@ function showCanvass($msg) {
         div.setAttribute('tabindex', -1)
         div.setAttribute('aria-labelledby', 'offcanvasBottomLabel')
         div.innerHTML = `<div class='offcanvas-header d-flex justify-content-center'>
-        <h5 class='offcanvas-title text-center' id='offcanvasBottomLabel'>${$msg}</h5>
+        <h5 class='offcanvas-title text-center' id='offcanvasBottomLabel'>${msg}</h5>
       </div>`;
       div.style.height = "80px";
       document.body.appendChild(div);

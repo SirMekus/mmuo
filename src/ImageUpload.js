@@ -38,7 +38,7 @@ function isImage(file){
 }
 
 function defaultFormats(){
-    return window.mmuo_acceptedDocs ?? ["image/jpeg", "image/png", "image/gif", "image/webp"]
+    return localStorage.getItem('mmuo_formats') ?? ["image/jpeg", "image/png", "image/gif", "image/webp"]
 }
 
 function acceptedFormats(){
@@ -53,6 +53,11 @@ function acceptedFormats(){
     return fileFormats.toString()
 }
 
+function setImageUploadConfig(config){
+    localStorage.setItem('mmuo_formats', config.formats ?? defaultFormats())
+    localStorage.setItem('mmuo_size', config.size ?? 3228267)
+}
+
 function uploadImage(e) {
     var selectedFiles = e.currentTarget.files
 
@@ -64,7 +69,7 @@ function uploadImage(e) {
 
     const acceptedDocs = defaultFormats();
 
-    const acceptedSize = window.acceptedSize ?? 3228267;
+    const acceptedSize = localStorage.getItem('mmuo_formats') ?? 3228267;
 
     let imageUploaded = false
 
@@ -191,4 +196,4 @@ function removePhoto(index)
 		    })
 }
 
-export { triggerFileChanger, removeImage, uploadImage, removePhoto };
+export { triggerFileChanger, removeImage, uploadImage, removePhoto, setImageUploadConfig };
