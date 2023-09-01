@@ -189,11 +189,11 @@ function removePhoto(index)
         listObj[currentIndex].setAttribute('data-entry', currentIndex)
     })
 
-	var found = $(document).find('.remove-image').length - 1;
+	// var found = $(document).find('.remove-image').length - 1;
 
-	$(document).find('.remove-image').each(function (k) {
-			    $(this).attr('data-entry', found - k)
-		    })
+	// $(document).find('.remove-image').each(function (k) {
+	// 		    $(this).attr('data-entry', found - k)
+	// 	    })
 }
 
 export { triggerFileChanger, removeImage, uploadImage, removePhoto, setImageUploadConfig };
