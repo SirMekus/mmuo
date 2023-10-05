@@ -1,3 +1,9 @@
+import { Element } from "./Element.js"
+
+function element(element, create=true) {
+    return new Element(element, create);
+}
+
 function empty(val) {
     if (val == undefined || val == "") {
         return true;
@@ -155,7 +161,6 @@ function showAlert(caption, href, textWord, classToUse=null, bc=null) {
         document.querySelectorAll(".alert-modal").forEach(function (currentValue, currentIndex, listObj) {
             listObj[currentIndex].remove();
         });
-        //document.querySelector(".modal").remove();
     }
 
     let div = document.createElement('div');
@@ -242,4 +247,4 @@ function moneyFormat(amount, currency = "NGN") {
     return formatter.format(amount);
 }
 
-export {showCanvass, showSpinner, removeSpinner, showAlert, capitalLetters, getKey, keyGen, lazyLoadImages, empty, DisplayAsToast, getQueryStringsFromUrl, moneyFormat}
+export {showCanvass, showSpinner, removeSpinner, showAlert, capitalLetters, getKey, keyGen, lazyLoadImages, empty, DisplayAsToast, getQueryStringsFromUrl, moneyFormat, element}

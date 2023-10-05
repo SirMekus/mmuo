@@ -1,3 +1,324 @@
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    enumerableOnly && (symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    })), keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = null != arguments[i] ? arguments[i] : {};
+    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
+  }
+
+  return target;
+}
+
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  }, _typeof(obj);
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  Object.defineProperty(Constructor, "prototype", {
+    writable: false
+  });
+  return Constructor;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function insertAfter(newNode, existingNode) {
+  existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+}
+
+function removeElement(scope, selector) {
+  scope.querySelectorAll(selector).forEach(function (currentValue, currentIndex, listObj) {
+    listObj[currentIndex].remove();
+  });
+}
+
+function checkParent(parent, child) {
+  var node = child.parentNode;
+  var currentChild = child;
+  var isFound = false; // keep iterating unless we find a node with the exact parent
+
+  while (!isFound) {
+    if (node == parent) {
+      isFound = true;
+      return currentChild;
+    }
+
+    currentChild = node;
+    node = currentChild.parentNode;
+  }
+
+  return false;
+}
+
+var Element = /*#__PURE__*/function () {
+  function Element(element) {
+    var create = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+    _classCallCheck(this, Element);
+
+    _defineProperty(this, "element", void 0);
+
+    _defineProperty(this, "selector", void 0);
+
+    _defineProperty(this, "create", void 0);
+
+    _defineProperty(this, "isObject", false);
+
+    this.create = create;
+    this.isObject = _typeof(element) == "object" || typeof element == "function";
+    this.element = create == true ? document.createElement(element) : this.isObject ? document.querySelector(element) : document.querySelectorAll(element); //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
+
+    this.selector = element;
+    return this;
+  }
+
+  _createClass(Element, [{
+    key: "id",
+    value: function id(_id) {
+      if (this.create || this.isObject) {
+        this.element.id = _id;
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].id = _id;
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "toggle",
+    value: function toggle(className) {
+      if (this.create || this.isObject) {
+        this.element.classList.toggle(className);
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].classList.toggle(className);
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "attr",
+    value: function attr(name) {
+      var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (!value) {
+        return this.element.getAttribute(name);
+      } else {
+        if (this.create) {
+          this.element.setAttribute(name, value);
+        } else {
+          this.element.forEach(function (currentValue, currentIndex, listObj) {
+            listObj[currentIndex].setAttribute(name, value);
+          });
+        }
+
+        return this;
+      }
+    }
+  }, {
+    key: "removeAttr",
+    value: function removeAttr(attr) {
+      if (this.create || this.isObject) {
+        this.element.removeAttribute(attr);
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].removeAttribute(attr);
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "css",
+    value: function css(property) {
+      var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      if (!value) {
+        return this.element.style[property];
+      } else {
+        if (this.create || this.isObject) {
+          this.element.style[property] = value;
+        } else {
+          this.element.forEach(function (currentValue, currentIndex, listObj) {
+            listObj[currentIndex].style[property] = value;
+          });
+        }
+
+        return this;
+      }
+    }
+  }, {
+    key: "classes",
+    value: function classes(_classes) {
+      if (this.create || this.isObject) {
+        this.element.className = _classes;
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].className = _classes;
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "addClass",
+    value: function addClass(className) {
+      if (this.create || this.isObject) {
+        this.element.classList.add(className);
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].classList.add(className);
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "contains",
+    value: function contains(className) {
+      return this.create || this.isObject ? this.element.classList.contains(className) : null;
+    }
+  }, {
+    key: "removeClass",
+    value: function removeClass(className) {
+      if (this.create || this.isObject) {
+        this.element.classList.remove(className);
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].classList.remove(className);
+        });
+      }
+    }
+  }, {
+    key: "text",
+    value: function text(content) {
+      if (this.create || this.isObject) {
+        this.element.innerHTML = content;
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].innerHTML = content;
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "value",
+    value: function value(content) {
+      if (this.create || this.isObject) {
+        this.element.value = content;
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].value = content;
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "appendTo",
+    value: function appendTo(element) {
+      var box = _typeof(element) == "object" ? element : document.querySelector(element);
+      box.appendChild(this.element);
+    }
+  }, {
+    key: "insertAfter",
+    value: function insertAfter$1(element) {
+      insertAfter(this.element, _typeof(element) == "object" ? element : document.querySelector(element));
+    }
+  }, {
+    key: "insertBefore",
+    value: function insertBefore(element) {
+      var selector = _typeof(element) == "object" ? element : document.querySelector(element);
+      var parent = selector.parentNode;
+      var childNode = checkParent(parent, selector);
+      parent.insertBefore(this.element, childNode);
+    }
+  }, {
+    key: "remove",
+    value: function remove() {
+      if (this.create || this.isObject) {
+        this.element.remove();
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].remove();
+        });
+      }
+    }
+  }, {
+    key: "getDomElement",
+    value: function getDomElement() {
+      return this.element;
+    }
+  }, {
+    key: "isPresent",
+    value: function isPresent() {
+      return this.element ? true : false;
+    }
+  }]);
+
+  return Element;
+}();
+
+function element(element) {
+  var create = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  return new Element(element, create);
+}
+
 function empty(val) {
   if (val == undefined || val == "") {
     return true;
@@ -174,7 +495,7 @@ function showAlert(caption, href, textWord) {
   if (document.querySelector(".alert-modal") != null) {
     document.querySelectorAll(".alert-modal").forEach(function (currentValue, currentIndex, listObj) {
       listObj[currentIndex].remove();
-    }); //document.querySelector(".modal").remove();
+    });
   }
 
   var div = document.createElement('div');
@@ -425,90 +746,10 @@ function removePhoto(index) {
 
   document.querySelectorAll(".remove-image").forEach(function (currentValue, currentIndex, listObj) {
     listObj[currentIndex].setAttribute('data-entry', currentIndex);
-  });
-  var found = $(document).find('.remove-image').length - 1;
-  $(document).find('.remove-image').each(function (k) {
-    $(this).attr('data-entry', found - k);
-  });
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    enumerableOnly && (symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    })), keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread2(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = null != arguments[i] ? arguments[i] : {};
-    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
-      _defineProperty(target, key, source[key]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
-      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-    });
-  }
-
-  return target;
-}
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, _typeof(obj);
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function insertAfter(newNode, existingNode) {
-  existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-}
-
-function removeElement(scope, selector) {
-  scope.querySelectorAll(selector).forEach(function (currentValue, currentIndex, listObj) {
-    listObj[currentIndex].remove();
-  });
-}
-
-function checkParent(parent, child) {
-  var node = child.parentNode;
-  var currentChild = child;
-  var isFound = false; // keep iterating unless we find a node with the exact parent
-
-  while (!isFound) {
-    if (node == parent) {
-      isFound = true;
-      return currentChild;
-    }
-
-    currentChild = node;
-    node = currentChild.parentNode;
-  }
-
-  return false;
+  }); // var found = $(document).find('.remove-image').length - 1;
+  // $(document).find('.remove-image').each(function (k) {
+  // 		    $(this).attr('data-entry', found - k)
+  // 	    })
 }
 
 function togglePasswordVisibility(event) {
@@ -983,4 +1224,4 @@ function registerEventListeners() {
   postRequestEvent();
 }
 
-export { DisplayAsToast, alertBeforeRunning, alertBeforeRunningEvent, checkIfPasswordsMatch, checkIfPasswordsMatchEvent, checkParent, empty, generatePassword, generatePasswordEvent, getKey, getQueryStringsFromUrl, getRequest, getRequestEvent, insertAfter, keyGen, lazyLoadImages, moneyFormat, on, openAsModalEvent, postRequest, postRequestEvent, registerEventListeners, removeElement, removeImageEvent, removeSpinner, setImageUploadConfig, showAlert, showCanvass, showSpinner, togglePasswordVisibility, togglePasswordVisibilityEvent, triggerFileChangerEvent, uploadImageEvent };
+export { DisplayAsToast, alertBeforeRunning, alertBeforeRunningEvent, checkIfPasswordsMatch, checkIfPasswordsMatchEvent, checkParent, element, empty, generatePassword, generatePasswordEvent, getKey, getQueryStringsFromUrl, getRequest, getRequestEvent, insertAfter, keyGen, lazyLoadImages, moneyFormat, on, openAsModalEvent, postRequest, postRequestEvent, registerEventListeners, removeElement, removeImageEvent, removeSpinner, setImageUploadConfig, showAlert, showCanvass, showSpinner, togglePasswordVisibility, togglePasswordVisibilityEvent, triggerFileChangerEvent, uploadImageEvent };
