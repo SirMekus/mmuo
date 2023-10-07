@@ -56,7 +56,7 @@ Or, if you prefer to link via `<script>` in HTML, especially if you don't use a 
 </script>
 ```
 
-> Please note that some features in this package, if you're coming from previous/older version have been moved to a new repo/package. Visit the package's repository for more information. 
+> Please note that some features in this package (AJAX request, Alert, etc), if you're coming from previous/older version, have been moved to a new repo/package - Ije. Visit the [Ije](https://www.github.com/SirMekus/ije) repository for more information.
 
 Please note that the `defaultEventListeners` registers multiple events in the DOM. However, there may be case(s) where you just need to register or use a single event. In this case you should just import the needed event only. The event name is usually the function name suffixed with `'Event'`.
 
