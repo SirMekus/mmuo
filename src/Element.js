@@ -15,7 +15,7 @@ class Element {
 
       this.isObject = (typeof(element) == "object" || typeof(element) == "function");
 
-      this.element = create == true ? document.createElement(element) : (this.isObject ? document.querySelector(element) : document.querySelectorAll(element));
+      this.element = create == true ? document.createElement(element) : (this.isObject ? element : document.querySelectorAll(element));
 
       //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
       this.selector = element;
@@ -36,7 +36,7 @@ class Element {
       return this;
     }
 
-    toggle(className){
+    toggleClass(className){
       if(this.create || this.isObject){
         this.element.classList.toggle(className);
       }
@@ -95,7 +95,7 @@ class Element {
       }
     }
 
-    classes(classes){
+    addClasses(classes){
       if(this.create || this.isObject){
         this.element.className = classes;
       }
@@ -135,9 +135,14 @@ class Element {
       }
     }
     
-    text(content){
+    text(content=null){
       if(this.create || this.isObject){
-        this.element.innerHTML = content;
+        if(content){
+          this.element.innerHTML = content;
+        }
+        else{
+          return this.element.innerHTML;
+        }
       }
       else{
         this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -147,9 +152,15 @@ class Element {
       return this;
     }
 
-    value(content){
+    value(content=null){
       if(this.create || this.isObject){
-        this.element.value = content;
+        if(content){
+          this.element.value = content;
+        }
+        else{
+          return this.element.value;
+        }
+        
       }
       else{
         this.element.forEach(function (currentValue, currentIndex, listObj) {
