@@ -171,9 +171,14 @@ class Element {
       return this;
     }
 
-    appendTo(element){
+    appendTo(element=null){
+      if(!element){
+        const box = document.body
+      }
+      else{
         const box = typeof(element) == "object" ? element : document.querySelector(element)
         box.appendChild(this.element);
+      }
     }
 
     insertAfter(element){
@@ -205,6 +210,10 @@ class Element {
 
     isPresent(){
       return this.element ? true : false;
+    }
+
+    data(dataset){
+      return this.element[dataset]
     }
   
   }

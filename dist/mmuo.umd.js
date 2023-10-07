@@ -296,9 +296,14 @@
       }
     }, {
       key: "appendTo",
-      value: function appendTo(element) {
-        var box = _typeof(element) == "object" ? element : document.querySelector(element);
-        box.appendChild(this.element);
+      value: function appendTo() {
+        var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+        if (!element) ; else {
+          var _box = _typeof(element) == "object" ? element : document.querySelector(element);
+
+          _box.appendChild(this.element);
+        }
       }
     }, {
       key: "insertAfter",
@@ -333,6 +338,11 @@
       key: "isPresent",
       value: function isPresent() {
         return this.element ? true : false;
+      }
+    }, {
+      key: "data",
+      value: function data(dataset) {
+        return this.element[dataset];
       }
     }]);
 
@@ -382,12 +392,6 @@
   } //******************* BASICALLY FOR GENERATING STRONG KEYS/PASSWORDS
 
 
-  var lowerCase = "abcdefghijklmnopqrstuvwxyz";
-  var upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  var numbers = "1234567890";
-  var special = "`~!@#$%^&*()-=_+[]{}|;':\",./<>?";
-  var hex = "123456789ABCDEF";
-
   function random() {
     var _window = window,
         crypto = _window.crypto,
@@ -409,11 +413,11 @@
     var useHex = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
     var chars = "";
     var key = "";
-    if (useLowerCase) chars += lowerCase;
-    if (useUpperCase) chars += upperCase;
-    if (useNumbers) chars += numbers;
-    if (useSpecial) chars += special;
-    if (useHex) chars += hex;
+    if (useLowerCase) chars += generateAlphabet(false);
+    if (useUpperCase) chars += generateAlphabet();
+    if (useNumbers) chars += "1234567890";
+    if (useSpecial) chars += "`~!@#$%^&*()-=_+[]{}|;':\",./<>?";
+    if (useHex) chars += "123456789ABCDEF";
 
     for (var i = 0; i < length; i++) {
       key += chars[Math.floor(random() * chars.length)];

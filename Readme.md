@@ -301,6 +301,7 @@ on('a', 'click', function(event){
 15. `remove()` - removes the element from the DOM.
 16. `getDomElement()` - returns the DOM instance of the created or selected element
 17. `isPresent()` - checks if the element exists in the DOM.
+18. `data(dataset)` - returns a `data attribute` value for an element.
 
 - ## Utility Functions
 
@@ -328,7 +329,7 @@ on('a', 'click', function(event){
 
 - ## Event Functions
 
-The functions here have already been registered in `defaultEventListeners()` function with appropriate class/ID names as described above. However, if you want specific event(s) or feature(s) instead of the whole events registered by `defaultEventListeners()` function you can simply import and use any of these events. More details of these functions have been dropped above; they follow the same protocol/procedure and must use the class/ID name discussed above.
+The functions here have already been registered in `defaultEventListeners()` function with appropriate class/ID names as described above. However, if you want specific event(s) or feature(s) instead of the whole events registered by `defaultEventListeners()` function you can simply import and use any of these events. More details of these functions have been dropped above; they follow the same protocol/procedure `and must use the class/ID name discussed above`.
 
 1. `togglePasswordVisibilityEvent` - toggles the visibility of password fields
 

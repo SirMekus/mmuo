@@ -52,12 +52,6 @@ function lazyLoadImages() {
 }
 
 //******************* BASICALLY FOR GENERATING STRONG KEYS/PASSWORDS
-const lowerCase = "abcdefghijklmnopqrstuvwxyz";
-const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const numbers = "1234567890";
-const special = "`~!@#$%^&*()-=_+[]{}|;':\",./<>?";
-const hex = "123456789ABCDEF";
-
 function random() {
     const { crypto, Uint32Array } = window;
     // if (typeof crypto?.getRandomValues === 'function' && typeof Uint32Array === 'function') {
@@ -73,11 +67,11 @@ function keyGen(length,useLowerCase = true,useUpperCase = true,useNumbers = true
     let chars = "";
     let key = "";
 
-    if (useLowerCase) chars += lowerCase;
-    if (useUpperCase) chars += upperCase;
-    if (useNumbers) chars += numbers;
-    if (useSpecial) chars += special;
-    if (useHex) chars += hex;
+    if (useLowerCase) chars += generateAlphabet(false);
+    if (useUpperCase) chars += generateAlphabet();
+    if (useNumbers) chars += "1234567890";
+    if (useSpecial) chars += "`~!@#$%^&*()-=_+[]{}|;':\",./<>?";
+    if (useHex) chars += "123456789ABCDEF";
 
     for (let i = 0; i < length; i++) {
         key += chars[Math.floor(random() * chars.length)];
