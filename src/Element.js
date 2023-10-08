@@ -78,7 +78,7 @@ class Element {
     }
 
     css(property, value=null){
-      if(!value){
+      if(value == null){
         return this.element.style[property];
       }
       else{
@@ -213,7 +213,12 @@ class Element {
     }
 
     data(dataset){
-      return this.element[dataset]
+      return this.element.dataset[dataset]
+    }
+
+    parent(){
+      this.element.parentElement
+      return this;
     }
   
   }

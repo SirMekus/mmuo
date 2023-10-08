@@ -84,10 +84,10 @@ function generatePassword (event) {
         }
     }
 
-    if (document.querySelector(`.password-checker-notification`) != null) {
-        let notificationBox = document.querySelector(`.password-checker-notification`);
-        notificationBox.classList.remove("text-danger");
-        notificationBox.innerHTML = "";
+    if ($('.password-checker-notification').isPresent()) {
+        let notificationBox = $('.password-checker-notification');
+        notificationBox.css('color', '');
+        notificationBox.text('');
     }
 }
 

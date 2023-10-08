@@ -12,6 +12,9 @@ Mmuo is a Javascript library aimed at making life easy for developers in running
 - [Utility Functions](#utility-functions)
 - [Event Functions](#event-functions)
 
+> [!IMPORTANT]
+> Please note that some previous features in this package such as: AJAX requests, Alert, Modal box, Image upload/manipulation etc, if you're coming from previous/older versions, have been moved to a new repo/package - Ije. Visit the [Ije](https://www.github.com/SirMekus/ije) repository for more information.
+
 ## Installation and Usage
 
 To get started all you need to do is:
@@ -45,9 +48,7 @@ window.addEventListener("DOMContentLoaded", function() {
 Or, if you prefer to link via `<script>` in HTML, especially if you don't use a bundler, then prefix the function(s) with **"`mmuo`"**:
 
 ```javascript
-<script src="/path_to_node_module_or_installation_directory/mmuo/dist/mmuo.umd.js"></script>   
-<script src="/path_to_axios_node_module_installation_directory"></script> 
-<script src="/path_to_bootstrap_node_module_installation_directory"></script> 
+<script src="/path_to_node_module_or_installation_directory/mmuo/dist/mmuo.umd.js"></script>
 
 <script>
     window.addEventListener("DOMContentLoaded", function() {
@@ -55,8 +56,6 @@ Or, if you prefer to link via `<script>` in HTML, especially if you don't use a 
     });
 </script>
 ```
-
-> Please note that some features in this package (AJAX request, Alert, etc), if you're coming from previous/older version, have been moved to a new repo/package - Ije. Visit the [Ije](https://www.github.com/SirMekus/ije) repository for more information.
 
 Please note that the `defaultEventListeners` registers multiple events in the DOM. However, there may be case(s) where you just need to register or use a single event. In this case you should just import the needed event only. The event name is usually the function name suffixed with `'Event'`.
 
@@ -81,7 +80,7 @@ Please note that in using this function (`defaultEventListeners`) some classes a
 | ----------- | ----------- | ----------- | ----------- |
 |.password-visibility | click | `togglePasswordVisibility` | This should be an `a` element nested within a `div` element which is a sibling to an `input` element. It optionally has a `data-id='password'` attribute with a value that points to the password input element you'll like to toggle. You can add more graphic quality by adding a `<i class="fas fa-eye-slash "></i>` within the `a` tag for visual representation of the toggling. This requires Font Awesome though.
 | .password-checker | focusout | `checkIfPasswordsMatch` | This uses the `name` attribute for its operation and assumes that two `input` with **name** attribute values of **password** and **password_confirmation** respectively exists.These two input elements should have the same class name (`password-checker`) in them. Also you should create or specify an element with `.password-checker-notification` class where the result of this confirmation will be displayed. By default this will only be displayed if the passwords don't match.
-|.gen-password | click | `generatePassword` | Generates password depending on the configuration/type (specified in the data-attribute which will be shown with an example [below](#2-utility-functions)) and displays the result in a typical `input` tag you may optionally specify via `data-target="password"` (where **password** is the name of the id. If you want it, like in a **password_confirmation** setting, to also write this generated password in another input tag then that input element should have the same id suffixed with a **"2"**. E.g, `id="password2"`). If an element `.password-visibility` class is present it'll be automatically triggered.
+|.gen-password | click | `generatePassword` | Generates password depending on the configuration/type (specified in the data-attribute which will be shown with an example [below](#utility-functions)) and displays the result in a typical `input` tag you may optionally specify via `data-target="password"` (where **password** is the name of the id. If you want it, like in a **password_confirmation** setting, to also write this generated password in another input tag then that input element should have the same id suffixed with a **"2"**. E.g, `id="password2"`). If an element `.password-visibility` class is present it'll be automatically triggered.
 
 All the above functions can simply be imported and used in your project.
 
@@ -108,7 +107,7 @@ All the above functions can simply be imported and used in your project.
 - ### Password Checker
 
 ```html
-<div class="form-group mt-3">
+<div>
     <label>Create Password</label>
     <div>
         <input type="password" class="password-checker"
@@ -117,7 +116,7 @@ All the above functions can simply be imported and used in your project.
     <span class="password-checker-notification"></span>
 </div>
 
-<div class="form-group mt-3">
+<div>
     <label>Re-enter Password</label>
     <div class="input-group">
         <input type="password" class="password-checker" id="password2" name="password_confirmation" />
@@ -128,7 +127,7 @@ All the above functions can simply be imported and used in your project.
 - ### Generate Password
 
 ```html
-<div class="form-group mt-3">
+<div>
     <label>Create Password</label>
     <div>
         <input type="password" class="password-checker"
@@ -137,7 +136,7 @@ All the above functions can simply be imported and used in your project.
     <span class="password-checker-notification"></span>
 </div>
 
-<div class="form-group mt-3">
+<div>
     <label>Re-enter Password</label>
     <div class="input-group">
         <input type="password" class="password-checker" id="password2" name="password_confirmation" />
@@ -151,7 +150,7 @@ All the above functions can simply be imported and used in your project.
 </div>
 ```
 
-Here, `data-strength` can have any value as defined in the `getKey(strength = null)` in the Utility Functions section.
+Here, `data-strength` can have any value as defined in the `getKey(strength = null)` in the [Utility Functions](#utility-functions) section.
 
 ## Registering Events
 
@@ -225,15 +224,17 @@ DOM Manipulation here works just like Jquery's. In fact, it was inspired by our 
 ```javascript
 import { element } from "mmuo"
 
-/*
+element('p');
+
+```
+
 OR,
 
-import { element as $} from "mmuo"
+```javascript
+//if you want to have the Jquery feeling and make the function shorter
+import { element as $ } from "mmuo"
 
-if you want to have the Jquery feeling and make the function shorter
-*/
-
-element('p');
+$('p');
 
 ```
 
@@ -252,7 +253,9 @@ $('a', false).toggle('btn-danger');
 
 This will select every `<a>` tag in the DOM.
 
-If, however, you want to work on a particular element - for instance on the particular button that was clicked on - say, for an event, simply pass the element (retrieved via any "normal" Javascript DOM retrieval methods) as argument to the function. If you use our event listener then you will already have access to a special `this` keyword which is a reference to the the element that was clicked on. E.g:
+If, however, you want to work on a particular element - for instance on the particular button that was clicked on - say, for an event, simply pass the element (retrieved via any "normal" Javascript DOM retrieval methods) as argument to the function. 
+
+> If you use our `on` function to listen to events then you will already have access to a special `this` keyword which is a reference to the element that was clicked on. E.g:
 
 ```javascript
 import { element as $, on } from "mmuo"
@@ -275,7 +278,6 @@ on('a', 'click', function(event){
     event.preventDefault();
 
     $(document.querySelector('.selector'), false).toggle('btn-danger');
-    //this => the element that was clicked on
 });
 
 ```
@@ -302,6 +304,7 @@ on('a', 'click', function(event){
 16. `getDomElement()` - returns the DOM instance of the created or selected element
 17. `isPresent()` - checks if the element exists in the DOM.
 18. `data(dataset)` - returns a `data attribute` value for an element.
+19. `parent()` - gets the parent element of the element supplied in the constructor.
 
 - ## Utility Functions
 

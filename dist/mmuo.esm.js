@@ -194,7 +194,7 @@ var Element = /*#__PURE__*/function () {
     value: function css(property) {
       var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
-      if (!value) {
+      if (value == null) {
         return this.element.style[property];
       } else {
         if (this.create || this.isObject) {
@@ -336,7 +336,13 @@ var Element = /*#__PURE__*/function () {
   }, {
     key: "data",
     value: function data(dataset) {
-      return this.element[dataset];
+      return this.element.dataset[dataset];
+    }
+  }, {
+    key: "parent",
+    value: function parent() {
+      this.element.parentElement;
+      return this;
     }
   }]);
 
@@ -569,10 +575,10 @@ function generatePassword(event) {
     }
   }
 
-  if (document.querySelector(".password-checker-notification") != null) {
-    var notificationBox = document.querySelector(".password-checker-notification");
-    notificationBox.classList.remove("text-danger");
-    notificationBox.innerHTML = "";
+  if (element('.password-checker-notification').isPresent()) {
+    var notificationBox = element('.password-checker-notification');
+    notificationBox.css('color', '');
+    notificationBox.text('');
   }
 }
 
