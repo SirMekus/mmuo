@@ -11,6 +11,7 @@ Mmuo is a Javascript library aimed at making life easy for developers in running
   - [Available Methods](#available-method)
 - [Utility Functions](#utility-functions)
 - [Event Functions](#event-functions)
+- [Lazy-load Images](#lazy-load-images)
 
 > [!IMPORTANT]
 > Please note that some previous features in this package such as: AJAX requests, Alert, Modal box, Image upload/manipulation etc, if you're coming from previous/older versions, have been moved to a new repo/package - Ije. Visit the [Ije](https://www.github.com/SirMekus/ije) repository for more information.
@@ -297,7 +298,7 @@ on('a', 'click', function(event){
 9. `removeClass(className)` - removes the `className` class from the element.
 10. `text(content=null)` - sets the inner HTML to the `content`. If an empty parameter is passed, it returns the content (if any) instead.
 11. `value(content=null)` - sets the value property of an input field to `content`. If an empty parameter is passed, it returns the value (if any) instead.
-12. `appendTo(element)` - appends the newly-created DOM element to `element`. `element` can be a retrieved DOM node already or a string which represents a valid HTML tag and/or a selector.
+12. `appendTo(element=null)` - appends the newly-created DOM element to `element`. `element` can be a retrieved DOM node already or a string which represents a valid HTML tag and/or a selector. If no argument is passed it will be appended to the `body`.
 13. `insertAfter(element)` - inserts the newly-created DOM element after `element`. `element` can be a retrieved DOM node (object) or a string which represents a valid HTML tag and/or a selector.
 14. `insertBefore(element)` - inserts the newly-created DOM element before `element`. `element` can be a retrieved DOM node (object) or a string which represents a valid HTML tag and/or a selector.
 15. `remove()` - removes the element from the DOM.
@@ -305,6 +306,9 @@ on('a', 'click', function(event){
 17. `isPresent()` - checks if the element exists in the DOM.
 18. `data(dataset)` - returns a `data attribute` value for an element.
 19. `parent()` - gets the parent element of the element supplied in the constructor.
+20. `scrollHeight()` - gets the scroll height of the element.
+21. `scrollToBottom()` - scrolls the element to bottom of document.
+22. `scrollIntoView()` - scrolls/brings the element into view.
 
 - ## Utility Functions
 
@@ -329,6 +333,9 @@ on('a', 'click', function(event){
 6. `moneyFormat(amount, currency = "NGN")` - formats the value of `amount` into a nice-looking money format. For instance, NGN1000 will be formatted to NGN 1,000 for easy readability.
 7. `queryString(name, url = window.location.href)` - gets the `name` property value of the query string from the `URL`. The current URL is used when no URL argument is passed.
 8. `generateAlphabet(capital=true)` - generates english alphabets in either capital or small letters. This is useful if you want to 'number' a list or give options like in an exam or interview.
+9. `isFloat(value)` - checks if `value` is a float number. Returns true or false.
+10. `formatNumber(number, precision=null)` - formats the `number` to `precision` number of decimals. If `number` is an integer it is untouched.
+11. `isEven(number)` - checks if `number` is an even number. Returns true or false.
 
 - ## Event Functions
 
@@ -346,6 +353,19 @@ Example usage:
 import { generatePasswordEvent } from "mmuo"
 
 generatePasswordEvent()
+
+```
+
+- ## Lazy-load Images
+
+To lazy-load an image, instead of giving it an `src` attribute, give it a `data-src` attribute with its value set to the URL/link of the image then import and use the `lazyLoadImages()` function. That is all. You can do it for any number of images and they'll be lazy-loaded when they come into view. Example:
+
+```javascript
+import { lazyLoadImages } from "mmuo"
+
+window.addEventListener("DOMContentLoaded", function() {
+    lazyLoadImages()
+});
 
 ```
 

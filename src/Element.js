@@ -15,7 +15,7 @@ class Element {
 
       this.isObject = (typeof(element) == "object" || typeof(element) == "function");
 
-      this.element = create == true ? document.createElement(element) : (this.isObject ? element : document.querySelectorAll(element));
+      this.element = create == true ? document.createElement(element) : (this.isObject ? element : (document.querySelectorAll(element).length > 1 ? document.querySelectorAll(element) : document.querySelector(element)));
 
       //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
       this.selector = element;
@@ -138,6 +138,23 @@ class Element {
     text(content=null){
       if(this.create || this.isObject){
         if(content){
+          this.element.textContent = content;
+        }
+        else{
+          return this.element.textContent;
+        }
+      }
+      else{
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].textContent = content;
+        });
+      }
+      return this;
+    }
+
+    html(content=null){
+      if(this.create || this.isObject){
+        if(content){
           this.element.innerHTML = content;
         }
         else{
@@ -219,6 +236,27 @@ class Element {
     parent(){
       this.element.parentElement
       return this;
+    }
+
+    scrollHeight(){
+      return this.element.scrollHeight;
+    }
+
+    scrollToBottom(){
+      if(this.isPresent()){
+        setTimeout(() => {
+          this.element.scrollTop = this.element.scrollHeight;
+        },0)
+      }
+      return this;
+    }
+
+    scrollIntoView(){
+      if(this.isPresent()){
+        setTimeout(function () {
+          this.element.scrollIntoView();
+        }, 1000);
+      }
     }
   
   }

@@ -156,4 +156,24 @@ function generateAlphabet(capital=true){
     return [...Array(26)].map((_, i)=> String.fromCharCode(i + (capital ? 65 : 97)));
 }
 
-export {capitalLetters, getKey, keyGen, lazyLoadImages, empty, getQueryStringsFromUrl, moneyFormat, element, queryString, generateAlphabet}
+function isFloat(value){
+    return (typeof value === 'number' && !Number.isNaN(value) && !Number.isInteger(value)) ? true : false;
+}
+
+function formatNumber(number, precision=null){
+    const decimalPlaces = (Number.isInteger(precision)) ? precision : 2;
+
+    const value = Number(number)
+    if(Number.isInteger(value) || isFloat(value)){
+        return Number(Number.isInteger(value) ? value : number.toFixed(decimalPlaces));
+    }
+    else{
+        return null
+    }
+}
+
+function isEven(number){
+    return number%2 === 0 ? true : false
+}
+
+export {capitalLetters, getKey, keyGen, lazyLoadImages, empty, getQueryStringsFromUrl, moneyFormat, element, queryString, generateAlphabet, isFloat, formatNumber, isEven}

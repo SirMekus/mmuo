@@ -125,7 +125,7 @@ var Element = /*#__PURE__*/function () {
 
     this.create = create;
     this.isObject = _typeof(element) == "object" || typeof element == "function";
-    this.element = create == true ? document.createElement(element) : this.isObject ? element : document.querySelectorAll(element); //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
+    this.element = create == true ? document.createElement(element) : this.isObject ? element : document.querySelectorAll(element).length > 1 ? document.querySelectorAll(element) : document.querySelector(element); //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
 
     this.selector = element;
     return this;
@@ -257,6 +257,25 @@ var Element = /*#__PURE__*/function () {
 
       if (this.create || this.isObject) {
         if (content) {
+          this.element.textContent = content;
+        } else {
+          return this.element.textContent;
+        }
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].textContent = content;
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "html",
+    value: function html() {
+      var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+      if (this.create || this.isObject) {
+        if (content) {
           this.element.innerHTML = content;
         } else {
           return this.element.innerHTML;
@@ -344,6 +363,33 @@ var Element = /*#__PURE__*/function () {
       this.element.parentElement;
       return this;
     }
+  }, {
+    key: "scrollHeight",
+    value: function scrollHeight() {
+      return this.element.scrollHeight;
+    }
+  }, {
+    key: "scrollToBottom",
+    value: function scrollToBottom() {
+      var _this = this;
+
+      if (this.isPresent()) {
+        setTimeout(function () {
+          _this.element.scrollTop = _this.element.scrollHeight;
+        }, 0);
+      }
+
+      return this;
+    }
+  }, {
+    key: "scrollIntoView",
+    value: function scrollIntoView() {
+      if (this.isPresent()) {
+        setTimeout(function () {
+          this.element.scrollIntoView();
+        }, 1000);
+      }
+    }
   }]);
 
   return Element;
@@ -357,6 +403,18 @@ function element(element) {
 function empty(val) {
   if (val == undefined || val == "") {
     return true;
+  }
+}
+
+function capitalLetters() {
+  var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+  if (s) {
+    return s.trim().split(" ").map(function (i) {
+      return i[0].toUpperCase() + i.substr(1);
+    }).reduce(function (ac, i) {
+      return "".concat(ac, " ").concat(i);
+    });
   }
 }
 
@@ -518,6 +576,26 @@ function generateAlphabet() {
   });
 }
 
+function isFloat(value) {
+  return typeof value === 'number' && !Number.isNaN(value) && !Number.isInteger(value) ? true : false;
+}
+
+function formatNumber(number) {
+  var precision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  var decimalPlaces = Number.isInteger(precision) ? precision : 2;
+  var value = Number(number);
+
+  if (Number.isInteger(value) || isFloat(value)) {
+    return Number(Number.isInteger(value) ? value : number.toFixed(decimalPlaces));
+  } else {
+    return null;
+  }
+}
+
+function isEven(number) {
+  return number % 2 === 0 ? true : false;
+}
+
 function togglePasswordVisibility(event) {
   event.preventDefault();
   var clicked_buton = event.currentTarget;
@@ -629,4 +707,4 @@ function defaultEventListeners() {
   generatePasswordEvent();
 }
 
-export { checkIfPasswordsMatch, checkIfPasswordsMatchEvent, checkParent, defaultEventListeners, element, empty, generateAlphabet, generatePassword, generatePasswordEvent, getKey, getQueryStringsFromUrl, insertAfter, keyGen, lazyLoadImages, moneyFormat, on, queryString, removeElement, togglePasswordVisibility, togglePasswordVisibilityEvent };
+export { capitalLetters, checkIfPasswordsMatch, checkIfPasswordsMatchEvent, checkParent, defaultEventListeners, element, empty, formatNumber, generateAlphabet, generatePassword, generatePasswordEvent, getKey, getQueryStringsFromUrl, insertAfter, isEven, isFloat, keyGen, lazyLoadImages, moneyFormat, on, queryString, removeElement, togglePasswordVisibility, togglePasswordVisibilityEvent };
