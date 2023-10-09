@@ -296,7 +296,7 @@ on('a', 'click', function(event){
 7. `addClass(class)` - adds a singe `class` to the element.
 8. `contains(className)` - checks if the element contains a class called `className`. It returns `true` or `false`.
 9. `removeClass(className)` - removes the `className` class from the element.
-10. `text(content=null)` - sets the inner HTML to the `content`. If an empty parameter is passed, it returns the content (if any) instead.
+10. `text(content=null)` - sets the text content of the element to the `content`. If an empty parameter is passed, it returns the content (if any) instead. This method will render any HTML element as string and not as HTML.
 11. `value(content=null)` - sets the value property of an input field to `content`. If an empty parameter is passed, it returns the value (if any) instead.
 12. `appendTo(element=null)` - appends the newly-created DOM element to `element`. `element` can be a retrieved DOM node already or a string which represents a valid HTML tag and/or a selector. If no argument is passed it will be appended to the `body`.
 13. `insertAfter(element)` - inserts the newly-created DOM element after `element`. `element` can be a retrieved DOM node (object) or a string which represents a valid HTML tag and/or a selector.
@@ -309,6 +309,7 @@ on('a', 'click', function(event){
 20. `scrollHeight()` - gets the scroll height of the element.
 21. `scrollToBottom()` - scrolls the element to bottom of document.
 22. `scrollIntoView()` - scrolls/brings the element into view.
+23. `html(content=null)` - sets the innerHTML content of the element to the `content`. If an empty parameter is passed, it returns the innerHTML content (if any) instead. This method will render any HTML as HTML.
 
 - ## Utility Functions
 

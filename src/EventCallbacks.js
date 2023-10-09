@@ -3,25 +3,29 @@ import { empty, getKey, element as $ } from "./helper.js"
 function togglePasswordVisibility(event){
     event.preventDefault()
     
-    var clicked_buton = event.currentTarget
+    var clicked_button = event.currentTarget
 
-	let icon = clicked_buton.children[0]
+	let icon = clicked_button.children[0]
 	
-	var passwordField = !empty(clicked_buton.dataset.id) ? document.querySelector(`#${clicked_buton.dataset.id}`) : clicked_buton.parentElement.parentElement.parentElement.querySelector("input");
+	var passwordField = !empty(clicked_button.dataset.id) ? document.querySelector(`#${clicked_button.dataset.id}`) : clicked_button.parentElement.parentElement.parentElement.querySelector("input");
 	
 	if(passwordField.getAttribute("type") == "password")
 	{
 		passwordField.setAttribute("type", "text")
-        icon.classList.remove('fa-eye-slash')
-        icon.classList.add('fa-eye')
+        if(icon){
+            icon.classList.remove('fa-eye-slash')
+            icon.classList.add('fa-eye')
+        }
 	}
 	else
 	{
 		if(passwordField.getAttribute("type") == "text")
 		{
             passwordField.setAttribute("type", "password")
-            icon.classList.remove('fa-eye')
-            icon.classList.add('fa-eye-slash')
+            if(icon){
+                icon.classList.remove('fa-eye')
+                icon.classList.add('fa-eye-slash')
+            }
 	    }
 	}
 }
@@ -51,22 +55,22 @@ function checkIfPasswordsMatch (event) {
             notificationBox.style.color = 'red';
         }
 
-        notificationBox.innerHTML = "Your passwords do not match";
+        notificationBox.textContent = "Your passwords do not match";
     } 
     else {
         notificationBox.style.color = null
-        notificationBox.innerHTML = "";
+        notificationBox.textContent = "";
     }
 }
 
 function generatePassword (event) {
     event.preventDefault();
 
-    var clicked_buton = event.currentTarget;
+    var clicked_button = event.currentTarget;
 
-    var target = clicked_buton.dataset.target ?? "password";
+    var target = clicked_button.dataset.target ?? "password";
 
-    var strength = clicked_buton.dataset.strength ?? "decent_pw";
+    var strength = clicked_button.dataset.strength ?? "decent_pw";
 
     var passPhrase = getKey(strength);
 
@@ -84,8 +88,8 @@ function generatePassword (event) {
         }
     }
 
-    if ($('.password-checker-notification').isPresent()) {
-        let notificationBox = $('.password-checker-notification');
+    if ($('.password-checker-notification',false).isPresent()) {
+        let notificationBox = $('.password-checker-notification',false);
         notificationBox.css('color', '');
         notificationBox.text('');
     }

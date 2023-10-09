@@ -10,12 +10,16 @@ class Element {
 
     isObject = false
 
+    isSingle = false
+
     constructor(element, create=true){
       this.create = create
 
       this.isObject = (typeof(element) == "object" || typeof(element) == "function");
 
-      this.element = create == true ? document.createElement(element) : (this.isObject ? element : (document.querySelectorAll(element).length > 1 ? document.querySelectorAll(element) : document.querySelector(element)));
+      this.isSingle = this.isObject || (document.querySelectorAll(element).length <= 1) ? true : false;
+
+      this.element = create == true ? document.createElement(element) : (this.isObject ? element : (this.isSingle ? document.querySelector(element) : document.querySelectorAll(element)));
 
       //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
       this.selector = element;
@@ -24,7 +28,7 @@ class Element {
     }
 
     id(id){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         this.element.id = id;
       }
       else{
@@ -37,7 +41,7 @@ class Element {
     }
 
     toggleClass(className){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         this.element.classList.toggle(className);
       }
       else{
@@ -53,7 +57,7 @@ class Element {
             return this.element.getAttribute(name);
         }
         else{
-          if(this.create){
+          if(this.create || this.isSingle){
             this.element.setAttribute(name, value);
           }
           else{
@@ -66,7 +70,7 @@ class Element {
     }
 
     removeAttr(attr){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         this.element.removeAttribute(attr);
       }
       else{
@@ -82,7 +86,7 @@ class Element {
         return this.element.style[property];
       }
       else{
-        if(this.create || this.isObject){
+        if(this.create || this.isObject || this.isSingle){
           this.element.style[property] = value;
         }
         else{
@@ -96,7 +100,7 @@ class Element {
     }
 
     addClasses(classes){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         this.element.className = classes;
       }
       else{
@@ -108,7 +112,7 @@ class Element {
     }
 
     addClass(className){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         this.element.classList.add(className);
       }
       else{
@@ -121,11 +125,11 @@ class Element {
     }
 
     contains(className){
-      return (this.create || this.isObject) ? this.element.classList.contains(className) : null;
+      return (this.create || this.isObject || this.isSingle) ? this.element.classList.contains(className) : null;
     }
 
     removeClass(className){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         this.element.classList.remove(className);
       }
       else{
@@ -136,7 +140,7 @@ class Element {
     }
     
     text(content=null){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         if(content){
           this.element.textContent = content;
         }
@@ -153,7 +157,7 @@ class Element {
     }
 
     html(content=null){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         if(content){
           this.element.innerHTML = content;
         }
@@ -170,7 +174,7 @@ class Element {
     }
 
     value(content=null){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         if(content){
           this.element.value = content;
         }
@@ -211,7 +215,7 @@ class Element {
     }
 
     remove(){
-      if(this.create || this.isObject){
+      if(this.create || this.isObject || this.isSingle){
         this.element.remove();
       }
       else{

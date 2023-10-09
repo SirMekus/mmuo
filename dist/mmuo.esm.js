@@ -123,9 +123,12 @@ var Element = /*#__PURE__*/function () {
 
     _defineProperty(this, "isObject", false);
 
+    _defineProperty(this, "isSingle", false);
+
     this.create = create;
     this.isObject = _typeof(element) == "object" || typeof element == "function";
-    this.element = create == true ? document.createElement(element) : this.isObject ? element : document.querySelectorAll(element).length > 1 ? document.querySelectorAll(element) : document.querySelector(element); //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
+    this.isSingle = this.isObject || document.querySelectorAll(element).length <= 1 ? true : false;
+    this.element = create == true ? document.createElement(element) : this.isObject ? element : this.isSingle ? document.querySelector(element) : document.querySelectorAll(element); //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
 
     this.selector = element;
     return this;
@@ -134,7 +137,7 @@ var Element = /*#__PURE__*/function () {
   _createClass(Element, [{
     key: "id",
     value: function id(_id) {
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         this.element.id = _id;
       } else {
         this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -147,7 +150,7 @@ var Element = /*#__PURE__*/function () {
   }, {
     key: "toggleClass",
     value: function toggleClass(className) {
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         this.element.classList.toggle(className);
       } else {
         this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -165,7 +168,7 @@ var Element = /*#__PURE__*/function () {
       if (!value) {
         return this.element.getAttribute(name);
       } else {
-        if (this.create) {
+        if (this.create || this.isSingle) {
           this.element.setAttribute(name, value);
         } else {
           this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -179,7 +182,7 @@ var Element = /*#__PURE__*/function () {
   }, {
     key: "removeAttr",
     value: function removeAttr(attr) {
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         this.element.removeAttribute(attr);
       } else {
         this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -197,7 +200,7 @@ var Element = /*#__PURE__*/function () {
       if (value == null) {
         return this.element.style[property];
       } else {
-        if (this.create || this.isObject) {
+        if (this.create || this.isObject || this.isSingle) {
           this.element.style[property] = value;
         } else {
           this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -211,7 +214,7 @@ var Element = /*#__PURE__*/function () {
   }, {
     key: "addClasses",
     value: function addClasses(classes) {
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         this.element.className = classes;
       } else {
         this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -224,7 +227,7 @@ var Element = /*#__PURE__*/function () {
   }, {
     key: "addClass",
     value: function addClass(className) {
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         this.element.classList.add(className);
       } else {
         this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -237,12 +240,12 @@ var Element = /*#__PURE__*/function () {
   }, {
     key: "contains",
     value: function contains(className) {
-      return this.create || this.isObject ? this.element.classList.contains(className) : null;
+      return this.create || this.isObject || this.isSingle ? this.element.classList.contains(className) : null;
     }
   }, {
     key: "removeClass",
     value: function removeClass(className) {
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         this.element.classList.remove(className);
       } else {
         this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -255,7 +258,7 @@ var Element = /*#__PURE__*/function () {
     value: function text() {
       var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         if (content) {
           this.element.textContent = content;
         } else {
@@ -274,7 +277,7 @@ var Element = /*#__PURE__*/function () {
     value: function html() {
       var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         if (content) {
           this.element.innerHTML = content;
         } else {
@@ -293,7 +296,7 @@ var Element = /*#__PURE__*/function () {
     value: function value() {
       var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         if (content) {
           this.element.value = content;
         } else {
@@ -334,7 +337,7 @@ var Element = /*#__PURE__*/function () {
   }, {
     key: "remove",
     value: function remove() {
-      if (this.create || this.isObject) {
+      if (this.create || this.isObject || this.isSingle) {
         this.element.remove();
       } else {
         this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -598,19 +601,25 @@ function isEven(number) {
 
 function togglePasswordVisibility(event) {
   event.preventDefault();
-  var clicked_buton = event.currentTarget;
-  var icon = clicked_buton.children[0];
-  var passwordField = !empty(clicked_buton.dataset.id) ? document.querySelector("#".concat(clicked_buton.dataset.id)) : clicked_buton.parentElement.parentElement.parentElement.querySelector("input");
+  var clicked_button = event.currentTarget;
+  var icon = clicked_button.children[0];
+  var passwordField = !empty(clicked_button.dataset.id) ? document.querySelector("#".concat(clicked_button.dataset.id)) : clicked_button.parentElement.parentElement.parentElement.querySelector("input");
 
   if (passwordField.getAttribute("type") == "password") {
     passwordField.setAttribute("type", "text");
-    icon.classList.remove('fa-eye-slash');
-    icon.classList.add('fa-eye');
+
+    if (icon) {
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
+    }
   } else {
     if (passwordField.getAttribute("type") == "text") {
       passwordField.setAttribute("type", "password");
-      icon.classList.remove('fa-eye');
-      icon.classList.add('fa-eye-slash');
+
+      if (icon) {
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      }
     }
   }
 }
@@ -625,20 +634,20 @@ function checkIfPasswordsMatch(event) {
       notificationBox.style.color = 'red';
     }
 
-    notificationBox.innerHTML = "Your passwords do not match";
+    notificationBox.textContent = "Your passwords do not match";
   } else {
     notificationBox.style.color = null;
-    notificationBox.innerHTML = "";
+    notificationBox.textContent = "";
   }
 }
 
 function generatePassword(event) {
-  var _clicked_buton$datase, _clicked_buton$datase2;
+  var _clicked_button$datas, _clicked_button$datas2;
 
   event.preventDefault();
-  var clicked_buton = event.currentTarget;
-  var target = (_clicked_buton$datase = clicked_buton.dataset.target) !== null && _clicked_buton$datase !== void 0 ? _clicked_buton$datase : "password";
-  var strength = (_clicked_buton$datase2 = clicked_buton.dataset.strength) !== null && _clicked_buton$datase2 !== void 0 ? _clicked_buton$datase2 : "decent_pw";
+  var clicked_button = event.currentTarget;
+  var target = (_clicked_button$datas = clicked_button.dataset.target) !== null && _clicked_button$datas !== void 0 ? _clicked_button$datas : "password";
+  var strength = (_clicked_button$datas2 = clicked_button.dataset.strength) !== null && _clicked_button$datas2 !== void 0 ? _clicked_button$datas2 : "decent_pw";
   var passPhrase = getKey(strength);
   var id = document.querySelector("#" + target);
   document.querySelector("#" + target).value = passPhrase;
@@ -653,8 +662,8 @@ function generatePassword(event) {
     }
   }
 
-  if (element('.password-checker-notification').isPresent()) {
-    var notificationBox = element('.password-checker-notification');
+  if (element('.password-checker-notification', false).isPresent()) {
+    var notificationBox = element('.password-checker-notification', false);
     notificationBox.css('color', '');
     notificationBox.text('');
   }
