@@ -1,7 +1,7 @@
 {
   "name": "mmuo",
-  "version": "2.0.10",
-  "description": "Mmuo is a Javascript library aimed at making life easy for developers in running common day-to-day tasks. It simplifies tasks like event handling, DOM manipulation (you'll so much love this) and some utility functions which have been documented.",
+  "version": "2.1.1",
+  "description": "Mmuo is a Javascript library aimed at making life easy for developers in running common day-to-day tasks. It simplifies tasks like event handling, DOM manipulation (you'll so much love this), AJAX function and some utility functions which have been documented.",
   "main": "dist/mmuo.cjs.js",
   "module": "dist/mmuo.esm.js",
   "browser": "dist/mmuo.umd.js",

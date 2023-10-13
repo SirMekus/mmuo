@@ -2,6 +2,32 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    enumerableOnly && (symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    })), keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = null != arguments[i] ? arguments[i] : {};
+    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+    });
+  }
+
+  return target;
+}
+
 function _typeof(obj) {
   "@babel/helpers - typeof";
 
@@ -116,8 +142,11 @@ function checkParent(parent, child) {
 var Element = /*#__PURE__*/function () {
   function Element(element) {
     var create = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    var root = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
     _classCallCheck(this, Element);
+
+    _defineProperty(this, "isThisClass", true);
 
     _defineProperty(this, "element", void 0);
 
@@ -130,9 +159,10 @@ var Element = /*#__PURE__*/function () {
     _defineProperty(this, "isSingle", false);
 
     this.create = create;
+    var finder = root || document;
     this.isObject = _typeof(element) == "object" || typeof element == "function";
-    this.isSingle = this.isObject || document.querySelectorAll(element).length <= 1 ? true : false;
-    this.element = create == true ? document.createElement(element) : this.isObject ? element : this.isSingle ? document.querySelector(element) : document.querySelectorAll(element); //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
+    this.isSingle = this.isObject || finder.querySelectorAll(element).length <= 1 ? true : false;
+    this.element = create == true ? document.createElement(element) : this.isObject ? element : this.isSingle ? finder.querySelector(element) : finder.querySelectorAll(element); //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
 
     this.selector = element;
     return this;
@@ -152,8 +182,8 @@ var Element = /*#__PURE__*/function () {
       return this;
     }
   }, {
-    key: "toggleClass",
-    value: function toggleClass(className) {
+    key: "toggle",
+    value: function toggle(className) {
       if (this.create || this.isObject || this.isSingle) {
         this.element.classList.toggle(className);
       } else {
@@ -256,6 +286,8 @@ var Element = /*#__PURE__*/function () {
           listObj[currentIndex].classList.remove(className);
         });
       }
+
+      return this;
     }
   }, {
     key: "text",
@@ -296,8 +328,8 @@ var Element = /*#__PURE__*/function () {
       return this;
     }
   }, {
-    key: "value",
-    value: function value() {
+    key: "val",
+    value: function val() {
       var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
       if (this.create || this.isObject || this.isSingle) {
@@ -320,7 +352,7 @@ var Element = /*#__PURE__*/function () {
       var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
       if (!element) ; else {
-        var _box = _typeof(element) == "object" ? element : document.querySelector(element);
+        var _box = _typeof(element) == "object" ? element !== null && element !== void 0 && element.isThisClass ? element.getDomElement() : element : document.querySelector(element);
 
         _box.appendChild(this.element);
       }
@@ -328,12 +360,12 @@ var Element = /*#__PURE__*/function () {
   }, {
     key: "insertAfter",
     value: function insertAfter$1(element) {
-      insertAfter(this.element, _typeof(element) == "object" ? element : document.querySelector(element));
+      insertAfter(this.element, _typeof(element) == "object" ? element !== null && element !== void 0 && element.isThisClass ? element.getDomElement() : element : document.querySelector(element));
     }
   }, {
     key: "insertBefore",
     value: function insertBefore(element) {
-      var selector = _typeof(element) == "object" ? element : document.querySelector(element);
+      var selector = _typeof(element) == "object" ? element !== null && element !== void 0 && element.isThisClass ? element.getDomElement() : element : document.querySelector(element);
       var parent = selector.parentNode;
       var childNode = checkParent(parent, selector);
       parent.insertBefore(this.element, childNode);
@@ -348,6 +380,16 @@ var Element = /*#__PURE__*/function () {
           listObj[currentIndex].remove();
         });
       }
+
+      return this;
+    }
+  }, {
+    key: "removeElement",
+    value: function removeElement(selector) {
+      this.element.querySelectorAll(selector).forEach(function (currentValue, currentIndex, listObj) {
+        listObj[currentIndex].remove();
+      });
+      return this;
     }
   }, {
     key: "getDomElement",
@@ -367,8 +409,7 @@ var Element = /*#__PURE__*/function () {
   }, {
     key: "parent",
     value: function parent() {
-      this.element.parentElement;
-      return this;
+      return this.element.parentElement ? new Element(this.element.parentElement, false) : null;
     }
   }, {
     key: "scrollHeight",
@@ -397,6 +438,25 @@ var Element = /*#__PURE__*/function () {
         }, 1000);
       }
     }
+  }, {
+    key: "find",
+    value: function find(selector) {
+      return this.element.querySelector(selector) ? new Element(selector, false, this.element) : null;
+    }
+  }, {
+    key: "each",
+    value: function each(funct) {
+      this.element.forEach(function (currentValue, currentIndex, listObj) {
+        var currentNode = listObj[currentIndex];
+        var boundedFunc = funct.bind(new Element(currentNode, false));
+        boundedFunc();
+      });
+    }
+  }, {
+    key: "sibling",
+    value: function sibling() {
+      return this.element.nextElementSibling ? new Element(this.element.nextElementSibling, false) : null;
+    }
   }]);
 
   return Element;
@@ -404,7 +464,8 @@ var Element = /*#__PURE__*/function () {
 
 function element(element) {
   var create = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-  return new Element(element, create);
+  var root = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+  return new Element(element, create, root);
 }
 
 function empty(val) {
@@ -673,6 +734,212 @@ function generatePassword(event) {
   }
 }
 
+function postRequest(event) {
+  event.preventDefault();
+  var this_form = element(this, false);
+  var submit_button = this_form.find("input[type='submit']") || this_form.find("button[type='submit']");
+
+  if (this_form.find("div.success")) {
+    this_form.find("div.success").remove();
+  }
+
+  element("div").addClass('success').insertBefore(submit_button);
+  var responseArea = this_form.find(".success");
+
+  if (this_form.find("#hidden_content")) {
+    this_form.find("#hidden_content").val(frames["richedit"].document.body.innerHTML);
+  }
+
+  var notFilled = false; //We make sure those fields that are required are filled incase the user mistakenly skips any.
+
+  this_form.find("input").each(function () {
+    var currentNode = this;
+
+    if (currentNode.data('name') || currentNode.attr("required")) {
+      if (currentNode.val() == "") {
+        notFilled = true;
+        var name = currentNode.data('name') || currentNode.attr("name");
+        currentNode.removeClass("is-valid").addClass("is-invalid");
+        responseArea.html("<span style='color:red;'>You should fill in the ".concat(capitalLetters(name), " field before you proceed</span>"));
+        return false;
+      }
+
+      currentNode.removeClass("is-invalid").addClass("is-valid");
+    }
+  });
+
+  if (notFilled == true) {
+    return false;
+  }
+
+  var sub_value = submit_button.val();
+  var action = this_form.attr("action");
+  var method = this_form.attr('method') || 'post';
+  var data_to_send = new FormData(this_form.getDomElement());
+  var progressIndicatorText = submit_button.data('inprogress') || "...in progress";
+  submit_button.val(progressIndicatorText).attr("disabled", "disabled");
+  var cssForServerError = "rgb(220, 53, 69)";
+  var cssForServerSuccess = "#198754";
+  var config = {
+    url: action,
+    method: method,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  };
+
+  switch (method.toLowerCase()) {
+    case 'patch':
+    case "put":
+    case "delete":
+    case "post":
+      config = _objectSpread2(_objectSpread2({}, config), {}, {
+        data: this_form.data('json') ? JSON.parse(JSON.stringify(Object.fromEntries(data_to_send))) : data_to_send
+      });
+      break;
+
+    default:
+      config = _objectSpread2(_objectSpread2({}, config), {}, {
+        params: JSON.parse(JSON.stringify(Object.fromEntries(data_to_send)))
+      });
+  }
+
+  axios.request(config).then(function (response) {
+    var _response$data, _response$data$messag, _response$data2;
+
+    //This is how we identify messages from the server so that we can easily remove them and display the latest message from server.
+    this_form.removeElement(".server-response");
+
+    if (this_form.data('bc')) {
+      document.dispatchEvent(new CustomEvent(this_form.data('bc'), {
+        detail: response
+      }));
+    }
+
+    if ((_response$data = response.data) !== null && _response$data !== void 0 && (_response$data$messag = _response$data.message) !== null && _response$data$messag !== void 0 && _response$data$messag.url || (_response$data2 = response.data) !== null && _response$data2 !== void 0 && _response$data2.url) {
+      var _response$data3, _response$data3$messa, _response$data4;
+
+      var url = ((_response$data3 = response.data) === null || _response$data3 === void 0 ? void 0 : (_response$data3$messa = _response$data3.message) === null || _response$data3$messa === void 0 ? void 0 : _response$data3$messa.url) || ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.url);
+
+      if (this_form.data('ext')) {
+        window.open(url, '_ext');
+      } else {
+        location.href = url;
+      }
+    } else {
+      var _ref, _response$data$messag2;
+
+      var serverResponse = (_ref = response.data.msg || ((_response$data$messag2 = response.data.message) === null || _response$data$messag2 === void 0 ? void 0 : _response$data$messag2.message) || response.data.message) !== null && _ref !== void 0 ? _ref : response.data;
+
+      if (_typeof(serverResponse) == 'object') {
+        var _submit_button$data;
+
+        serverResponse = (_submit_button$data = submit_button.data('mSuccess')) !== null && _submit_button$data !== void 0 ? _submit_button$data : "Operation was successful";
+      }
+
+      responseArea.html("<span style=\"color:".concat(cssForServerSuccess, "; font-weight:700;\">").concat(serverResponse, "</span>"));
+    }
+  }).catch(function (error) {
+    var _error$response$data$2, _error$response$data$3;
+
+    if (!error || !error.response) {
+      return;
+    }
+
+    this_form.removeElement(".server-response");
+
+    switch (error.response.status) {
+      case 422:
+        var items = error.response.data.errors;
+
+        if (items != undefined) {
+          for (var item in items) {
+            //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
+            if (!this_form.find("[name='".concat(item, "']"))) {
+              continue;
+            }
+
+            var sibling = this_form.find("[name='".concat(item, "']")).sibling();
+            var id = "".concat(item, "_mmuo");
+
+            if (!sibling) {
+              //Then we need to create it
+              element("div").id(id).addClass('server-response').css('color', cssForServerError).insertAfter(this_form.find("[name='".concat(item, "']")));
+            } else {
+              if (sibling.attr('id') != id) {
+                element("div").id(id).addClass('server-response').css('color', cssForServerError).insertAfter(sibling);
+              }
+            }
+
+            this_form.find("#".concat(id)).text(items[item][0]);
+          }
+
+          if (items.length > 1) {
+            responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>Please make sure you fill required fields in the form and try again.</span>"));
+          } else {
+            responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(error.response.data.message, "</span>"));
+          }
+        } else {
+          var _error$response$data, _error$response$data$, _error$response$data2, _error$response$data3, _error$response$data4, _error$response$data5;
+
+          if ((_error$response$data = error.response.data) !== null && _error$response$data !== void 0 && (_error$response$data$ = _error$response$data.message) !== null && _error$response$data$ !== void 0 && _error$response$data$.message) {
+            var msg = error.response.data.message.message;
+          } else if ((_error$response$data2 = error.response.data) !== null && _error$response$data2 !== void 0 && _error$response$data2.message) {
+            var msg = error.response.data.message;
+          } else {
+            var msg = error.response.data;
+          }
+
+          responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(msg, "</span>"));
+
+          if ((_error$response$data3 = error.response.data) !== null && _error$response$data3 !== void 0 && (_error$response$data4 = _error$response$data3.message) !== null && _error$response$data4 !== void 0 && _error$response$data4.target || (_error$response$data5 = error.response.data) !== null && _error$response$data5 !== void 0 && _error$response$data5.target) {
+            var _error$response$data6;
+
+            var inputName = error.response.data.message.target || ((_error$response$data6 = error.response.data) === null || _error$response$data6 === void 0 ? void 0 : _error$response$data6.target); //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
+
+            if (this_form.find("[name='".concat(inputName, "']")) != null) {
+              var sibling = this_form.find("[name='".concat(inputName, "']")).sibling();
+
+              var _id = "".concat(inputName, "_mmuo");
+
+              if (!sibling) {
+                //Then we need to create it
+                element("div").id(_id).addClass('server-response').css('color', cssForServerError).css('fontWeight', '700').insertAfter(this_form.find("[name='".concat(inputName, "']")));
+              } else {
+                if (sibling.attr('id') != _id) {
+                  element("div").id(_id).addClass('server-response').css('color', cssForServerError).css('fontWeight', '700').insertAfter(sibling);
+                }
+              }
+
+              this_form.find("#".concat(_id)).html(msg);
+            }
+          }
+        }
+
+        break;
+
+      case 401:
+        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(error.response.data.message, "</span>"));
+        break;
+
+      case 403:
+        var forbidden = (_error$response$data$2 = error.response.data.message) !== null && _error$response$data$2 !== void 0 ? _error$response$data$2 : error.response.data;
+        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(forbidden, "</span>"));
+        break;
+
+      case 404:
+        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat((_error$response$data$3 = error.response.data.message) !== null && _error$response$data$3 !== void 0 ? _error$response$data$3 : error.response.data, "</span>"));
+        break;
+
+      default:
+        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>There was a problem in submission. Please try again</span>"));
+    }
+  }).then(function () {
+    submit_button.val(sub_value);
+    submit_button.removeAttr("disabled");
+  });
+}
+
 /**
  * Adds a istener for specific tags for elements that may not yet
  * exist.
@@ -714,10 +981,15 @@ function generatePasswordEvent() {
   on(".gen-password", "click", generatePassword);
 }
 
+function postRequestEvent() {
+  on("#form .form", "submit", postRequest);
+}
+
 function defaultEventListeners() {
   togglePasswordVisibilityEvent();
   checkIfPasswordsMatchEvent();
   generatePasswordEvent();
+  postRequestEvent();
 }
 
 exports.capitalLetters = capitalLetters;
@@ -740,6 +1012,8 @@ exports.keyGen = keyGen;
 exports.lazyLoadImages = lazyLoadImages;
 exports.moneyFormat = moneyFormat;
 exports.on = on;
+exports.postRequest = postRequest;
+exports.postRequestEvent = postRequestEvent;
 exports.queryString = queryString;
 exports.removeElement = removeElement;
 exports.togglePasswordVisibility = togglePasswordVisibility;

@@ -1,6 +1,8 @@
 import { insertAfter, checkParent } from "./Dom"
 
 class Element {
+
+    isThisClass = true
   
     element
 
@@ -12,21 +14,23 @@ class Element {
 
     isSingle = false
 
-    constructor(element, create=true){
+    constructor(element, create=true, root=null){
       this.create = create
+
+      let finder = root || document;
 
       this.isObject = (typeof(element) == "object" || typeof(element) == "function");
 
-      this.isSingle = this.isObject || (document.querySelectorAll(element).length <= 1) ? true : false;
+      this.isSingle = this.isObject || (finder.querySelectorAll(element).length <= 1) ? true : false;
 
-      this.element = create == true ? document.createElement(element) : (this.isObject ? element : (this.isSingle ? document.querySelector(element) : document.querySelectorAll(element)));
+      this.element = create == true ? document.createElement(element) : (this.isObject ? element : (this.isSingle ? finder.querySelector(element) : finder.querySelectorAll(element)));
 
       //Some ops may require working with DOM nodes already created. We shall seek this element from the DOM using a special method.
       this.selector = element;
 
       return this;
     }
-
+    
     id(id){
       if(this.create || this.isObject || this.isSingle){
         this.element.id = id;
@@ -40,7 +44,7 @@ class Element {
       return this;
     }
 
-    toggleClass(className){
+    toggle(className){
       if(this.create || this.isObject || this.isSingle){
         this.element.classList.toggle(className);
       }
@@ -137,6 +141,7 @@ class Element {
           listObj[currentIndex].classList.remove(className)
         });
       }
+      return this;
     }
     
     text(content=null){
@@ -173,7 +178,7 @@ class Element {
       return this;
     }
 
-    value(content=null){
+    val(content=null){
       if(this.create || this.isObject || this.isSingle){
         if(content){
           this.element.value = content;
@@ -181,7 +186,6 @@ class Element {
         else{
           return this.element.value;
         }
-        
       }
       else{
         this.element.forEach(function (currentValue, currentIndex, listObj) {
@@ -197,17 +201,17 @@ class Element {
         const box = document.body
       }
       else{
-        const box = typeof(element) == "object" ? element : document.querySelector(element)
+        const box = typeof(element) == "object" ? (element?.isThisClass ? element.getDomElement() : element) : document.querySelector(element)
         box.appendChild(this.element);
       }
     }
 
     insertAfter(element){
-        insertAfter(this.element, (typeof(element) == "object" ? element : document.querySelector(element)));
+        insertAfter(this.element, (typeof(element) == "object" ? (element?.isThisClass ? element.getDomElement() : element) : document.querySelector(element)));
     }
 
     insertBefore(element){
-      const selector = typeof(element) == "object" ? element : document.querySelector(element);
+      const selector = typeof(element) == "object" ? (element?.isThisClass ? element.getDomElement() : element) : document.querySelector(element);
       const parent = selector.parentNode;
       
       const childNode = checkParent(parent, selector)
@@ -223,7 +227,15 @@ class Element {
           listObj[currentIndex].remove();
         });
       }
+      return this;
     }
+
+    removeElement(selector) {
+      this.element.querySelectorAll(selector).forEach(function(currentValue, currentIndex, listObj){
+        listObj[currentIndex].remove()
+      });
+      return this;
+   }
 
     getDomElement(){
       return this.element;
@@ -238,8 +250,7 @@ class Element {
     }
 
     parent(){
-      this.element.parentElement
-      return this;
+      return this.element.parentElement ? new Element(this.element.parentElement, false) : null
     }
 
     scrollHeight(){
@@ -261,6 +272,22 @@ class Element {
           this.element.scrollIntoView();
         }, 1000);
       }
+    }
+
+    find(selector){
+      return this.element.querySelector(selector) ? new Element(selector, false, this.element) : null
+    }
+
+    each(funct){
+      this.element.forEach(function (currentValue, currentIndex, listObj) {
+        var currentNode = listObj[currentIndex];
+        let boundedFunc = funct.bind(new Element(currentNode, false))
+        boundedFunc()
+      })
+    }
+
+    sibling(){
+      return this.element.nextElementSibling ? new Element(this.element.nextElementSibling, false) : null
     }
   
   }

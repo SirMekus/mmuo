@@ -1,4 +1,4 @@
-import { togglePasswordVisibility, checkIfPasswordsMatch, generatePassword } from "./EventCallbacks.js"
+import { togglePasswordVisibility, checkIfPasswordsMatch, generatePassword, postRequest } from "./EventCallbacks.js"
 
 /**
  * Adds a istener for specific tags for elements that may not yet
@@ -40,6 +40,10 @@ function generatePasswordEvent(){
     on(".gen-password", "click", generatePassword);
 }
 
+function postRequestEvent(){
+    on("#form .form", "submit", postRequest);
+}
+
 function defaultEventListeners() {
 
     togglePasswordVisibilityEvent()
@@ -47,6 +51,8 @@ function defaultEventListeners() {
     checkIfPasswordsMatchEvent()
 
     generatePasswordEvent()
+
+    postRequestEvent()
 }
 
-export { defaultEventListeners, on, togglePasswordVisibilityEvent, checkIfPasswordsMatchEvent, generatePasswordEvent };
+export { defaultEventListeners, on, togglePasswordVisibilityEvent, checkIfPasswordsMatchEvent, generatePasswordEvent,postRequestEvent };

@@ -1,7 +1,7 @@
 import { Element } from "./Element.js"
 
-function element(element, create=true) {
-    return new Element(element, create);
+function element(element, create=true, root=null) {
+    return new Element(element, create, root);
 }
 
 function empty(val) {
