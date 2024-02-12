@@ -242,6 +242,38 @@ var Element = /*#__PURE__*/function () {
       }
     }
   }, {
+    key: "hide",
+    value: function hide() {
+      if (this.create || this.isObject || this.isSingle) {
+        this.element.style.display = 'none';
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].style.display = 'none';
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      if (this.create || this.isObject || this.isSingle) {
+        this.element.style.display = '';
+      } else {
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].style.display = '';
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "isHidden",
+    value: function isHidden() {
+      var status = this.css('display');
+      return status && status == 'none' ? true : false;
+    }
+  }, {
     key: "addClasses",
     value: function addClasses(classes) {
       if (this.create || this.isObject || this.isSingle) {
@@ -469,18 +501,35 @@ function empty(val) {
     return true;
   }
 }
+/**
+ * Returns a new string with the first letter of each word capitalized.
+ *
+ * @param {string} inputString - the input string to be capitalized
+ * @return {string} the modified string with capitalized letters
+ */
+
 
 function capitalLetters() {
-  var s = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  var inputString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-  if (s) {
-    return s.trim().split(" ").map(function (i) {
-      return i[0].toUpperCase() + i.substr(1);
-    }).reduce(function (ac, i) {
-      return "".concat(ac, " ").concat(i);
-    });
+  if (inputString) {
+    return inputString.trim().split(' ').map(function (word) {
+      return word[0].toUpperCase() + word.substring(1);
+    }).join(' ');
   }
-}
+} // function capitalLetters(s=null) {
+//     if(s){
+//         return s.trim().split(" ").map((i) => i[0].toUpperCase() + i.substr(1)).reduce((ac, i) => `${ac} ${i}`);
+//     }
+// }
+
+/**
+ * Lazy loads images using IntersectionObserver and setInterval.
+ *
+ * @param {none} - No parameters
+ * @return {none} - No return value
+ */
+
 
 function lazyLoadImages() {
   // create config object: rootMargin and threshold
@@ -526,19 +575,39 @@ function random() {
 
   return Math.random();
 }
+/**
+ * Generates a random key of the specified length using the given options.
+ *
+ * @param {number} length - the length of the key to be generated
+ * @param {object} [options] - an object containing options for generating the key
+ * @param {boolean} [options.useLowerCase=true] - flag to include lowercase alphabets in the key
+ * @param {boolean} [options.useUpperCase=true] - flag to include uppercase alphabets in the key
+ * @param {boolean} [options.useNumbers=true] - flag to include numbers in the key
+ * @param {boolean} [options.useSpecial=true] - flag to include special characters in the key
+ * @param {boolean} [options.useHex=false] - flag to include hexadecimal characters in the key
+ * @return {string} the generated random key
+ */
+
 
 function keyGen(length) {
-  var useLowerCase = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-  var useUpperCase = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-  var useNumbers = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-  var useSpecial = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : true;
-  var useHex = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : false;
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+    useLowerCase: true,
+    useUpperCase: true,
+    useNumbers: true,
+    useSpecial: true,
+    useHex: false
+  };
+  var useLowerCase = options.useLowerCase,
+      useUpperCase = options.useUpperCase,
+      useNumbers = options.useNumbers,
+      useSpecial = options.useSpecial,
+      useHex = options.useHex;
   var chars = "";
   var key = "";
-  if (useLowerCase) chars += generateAlphabet(false);
-  if (useUpperCase) chars += generateAlphabet();
+  if (useLowerCase) chars += generateAlphabet(false).toString().replaceAll(",", "");
+  if (useUpperCase) chars += generateAlphabet().toString().replaceAll(",", "");
   if (useNumbers) chars += "1234567890";
-  if (useSpecial) chars += "`~!@#$%^&*()-=_+[]{}|;':\",./<>?";
+  if (useSpecial) chars += "`~!@#$%^&*()-=_+[]{}|;:/<>?";
   if (useHex) chars += "123456789ABCDEF";
 
   for (var i = 0; i < length; i++) {
@@ -549,45 +618,106 @@ function keyGen(length) {
 }
 
 function getKey() {
-  var strength = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-  switch (strength) {
-    case "letters":
-      return keyGen(10, true, true, false, false, false);
-
-    case "decent_pw":
-      return keyGen(10, true, true, true, false, false);
-
-    case "strong":
-      return keyGen(15, true, true, true, true, false);
-
-    case "knox_password":
-      return keyGen(30, true, true, true, true, false);
-
-    case "ci":
-      return keyGen(32, true, true, true, false, false);
-
-    case "type_160":
-      return keyGen(20, true, true, true, true, false);
-
-    case "type_504":
-      return keyGen(63, true, true, true, true, false);
-
-    case "type_64":
-      return keyGen(5, false, false, false, false, true);
-
-    case "type_128":
-      return keyGen(13, false, false, false, false, true);
-
-    case "type_152":
-      return keyGen(16, false, false, false, false, true);
-
-    case "type_256":
-      return keyGen(29, false, false, false, false, true);
-
-    default:
-      return keyGen(8, true, true, true, false, false);
-  }
+  var strength = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "default";
+  var keyOptions = {
+    "default": {
+      length: 8,
+      useLowerCase: true,
+      useUpperCase: true,
+      useNumbers: true,
+      useSpecial: false,
+      useHex: false
+    },
+    "letters": {
+      length: 10,
+      useLowerCase: true,
+      useUpperCase: true,
+      useNumbers: false,
+      useSpecial: false,
+      useHex: false
+    },
+    "decent_pw": {
+      length: 10,
+      useLowerCase: true,
+      useUpperCase: true,
+      useNumbers: true,
+      useSpecial: false,
+      useHex: false
+    },
+    "strong": {
+      length: 15,
+      useLowerCase: true,
+      useUpperCase: true,
+      useNumbers: true,
+      useSpecial: true,
+      useHex: false
+    },
+    "knox_password": {
+      length: 30,
+      useLowerCase: true,
+      useUpperCase: true,
+      useNumbers: true,
+      useSpecial: true,
+      useHex: false
+    },
+    "ci": {
+      length: 32,
+      useLowerCase: true,
+      useUpperCase: true,
+      useNumbers: true,
+      useSpecial: false,
+      useHex: false
+    },
+    "type_160": {
+      length: 20,
+      useLowerCase: true,
+      useUpperCase: true,
+      useNumbers: true,
+      useSpecial: true,
+      useHex: false
+    },
+    "type_504": {
+      length: 63,
+      useLowerCase: true,
+      useUpperCase: true,
+      useNumbers: true,
+      useSpecial: true,
+      useHex: false
+    },
+    "type_64": {
+      length: 5,
+      useLowerCase: false,
+      useUpperCase: false,
+      useNumbers: false,
+      useSpecial: false,
+      useHex: true
+    },
+    "type_128": {
+      length: 13,
+      useLowerCase: false,
+      useUpperCase: false,
+      useNumbers: false,
+      useSpecial: false,
+      useHex: true
+    },
+    "type_152": {
+      length: 16,
+      useLowerCase: false,
+      useUpperCase: false,
+      useNumbers: false,
+      useSpecial: false,
+      useHex: true
+    },
+    "type_256": {
+      length: 29,
+      useLowerCase: false,
+      useUpperCase: false,
+      useNumbers: false,
+      useSpecial: false,
+      useHex: true
+    }
+  };
+  return keyGen(keyOptions[strength].length, keyOptions[strength]);
 }
 
 function getQueryStringsFromUrl(url) {
@@ -632,6 +762,13 @@ function queryString(name) {
   if (!results[2]) return "";
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+/**
+ * Generates the alphabet.
+ *
+ * @param {boolean} capital - specify if the alphabet should be in capital letters, defaults to true
+ * @return {Array} an array of the alphabet characters
+ */
+
 
 function generateAlphabet() {
   var capital = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
@@ -643,6 +780,14 @@ function generateAlphabet() {
 function isFloat(value) {
   return typeof value === 'number' && !Number.isNaN(value) && !Number.isInteger(value) ? true : false;
 }
+/**
+ * Formats a number to a specified precision, or to 2 decimal places by default.
+ *
+ * @param {number} number - The number to be formatted
+ * @param {number} precision - The precision to format the number to, defaults to 2 decimal places
+ * @return {number|null} The formatted number, or null if the input is not a valid number
+ */
+
 
 function formatNumber(number) {
   var precision = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
@@ -655,6 +800,13 @@ function formatNumber(number) {
     return null;
   }
 }
+/**
+ * Check if the given number is even.
+ *
+ * @param {number} number - The number to be checked
+ * @return {boolean} true if the number is even, false otherwise
+ */
+
 
 function isEven(number) {
   return number % 2 === 0 ? true : false;
@@ -744,29 +896,27 @@ function postRequest(event) {
 
   if (this_form.find("#hidden_content")) {
     this_form.find("#hidden_content").val(frames["richedit"].document.body.innerHTML);
-  }
+  } // var notFilled = false;
+  // //We make sure those fields that are required are filled incase the user mistakenly skips any.
+  // this_form
+  //     .find("input")
+  //     .each(function() {
+  //         var currentNode = this;
+  //         if (currentNode.data('name') || currentNode.attr("required")) {
+  //             if (currentNode.val() == "") {
+  //                 notFilled = true;
+  //                 var name = currentNode.data('name') || currentNode.attr("name");
+  //                 currentNode.removeClass("is-valid").addClass("is-invalid");
+  //                 responseArea.html(`<span style='color:red;'>You should fill in the ${capitalLetters(name)} field before you proceed</span>`)
+  //                 return false;
+  //             }
+  //             currentNode.removeClass("is-invalid").addClass("is-valid");
+  //         }
+  //     });
+  // if (notFilled == true) {
+  //     return false;
+  // }
 
-  var notFilled = false; //We make sure those fields that are required are filled incase the user mistakenly skips any.
-
-  this_form.find("input").each(function () {
-    var currentNode = this;
-
-    if (currentNode.data('name') || currentNode.attr("required")) {
-      if (currentNode.val() == "") {
-        notFilled = true;
-        var name = currentNode.data('name') || currentNode.attr("name");
-        currentNode.removeClass("is-valid").addClass("is-invalid");
-        responseArea.html("<span style='color:red;'>You should fill in the ".concat(capitalLetters(name), " field before you proceed</span>"));
-        return false;
-      }
-
-      currentNode.removeClass("is-invalid").addClass("is-valid");
-    }
-  });
-
-  if (notFilled == true) {
-    return false;
-  }
 
   var sub_value = submit_button.val();
   var action = this_form.attr("action");
@@ -930,6 +1080,10 @@ function postRequest(event) {
       default:
         responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>There was a problem in submission. Please try again</span>"));
     }
+
+    document.dispatchEvent(new CustomEvent('http_error', {
+      detail: error
+    }));
   }).then(function () {
     submit_button.val(sub_value);
     submit_button.removeAttr("disabled");

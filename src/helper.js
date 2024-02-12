@@ -10,12 +10,32 @@ function empty(val) {
     }
 }
 
-function capitalLetters(s=null) {
-    if(s){
-        return s.trim().split(" ").map((i) => i[0].toUpperCase() + i.substr(1)).reduce((ac, i) => `${ac} ${i}`);
+/**
+ * Returns a new string with the first letter of each word capitalized.
+ *
+ * @param {string} inputString - the input string to be capitalized
+ * @return {string} the modified string with capitalized letters
+ */
+function capitalLetters(inputString = '') {
+    if (inputString) {
+        return inputString.trim().split(' ')
+            .map((word) => word[0].toUpperCase() + word.substring(1))
+            .join(' ');
     }
 }
 
+// function capitalLetters(s=null) {
+//     if(s){
+//         return s.trim().split(" ").map((i) => i[0].toUpperCase() + i.substr(1)).reduce((ac, i) => `${ac} ${i}`);
+//     }
+// }
+
+/**
+ * Lazy loads images using IntersectionObserver and setInterval.
+ *
+ * @param {none} - No parameters
+ * @return {none} - No return value
+ */
 function lazyLoadImages() {
     // create config object: rootMargin and threshold
     // are two properties exposed by the interface
@@ -63,14 +83,35 @@ function random() {
     return Math.random();
 }
 
-function keyGen(length,useLowerCase = true,useUpperCase = true,useNumbers = true,useSpecial = true,useHex = false) {
+/**
+ * Generates a random key of the specified length using the given options.
+ *
+ * @param {number} length - the length of the key to be generated
+ * @param {object} [options] - an object containing options for generating the key
+ * @param {boolean} [options.useLowerCase=true] - flag to include lowercase alphabets in the key
+ * @param {boolean} [options.useUpperCase=true] - flag to include uppercase alphabets in the key
+ * @param {boolean} [options.useNumbers=true] - flag to include numbers in the key
+ * @param {boolean} [options.useSpecial=true] - flag to include special characters in the key
+ * @param {boolean} [options.useHex=false] - flag to include hexadecimal characters in the key
+ * @return {string} the generated random key
+ */
+function keyGen(
+    length, 
+    options = { 
+        useLowerCase: true, 
+        useUpperCase: true,
+        useNumbers: true, 
+        useSpecial: true, 
+        useHex: false 
+    }) {
+    const { useLowerCase, useUpperCase, useNumbers, useSpecial, useHex } = options;
     let chars = "";
     let key = "";
 
-    if (useLowerCase) chars += generateAlphabet(false);
-    if (useUpperCase) chars += generateAlphabet();
+    if (useLowerCase) chars += generateAlphabet(false).toString().replaceAll(",", "");
+    if (useUpperCase) chars += generateAlphabet().toString().replaceAll(",", "");
     if (useNumbers) chars += "1234567890";
-    if (useSpecial) chars += "`~!@#$%^&*()-=_+[]{}|;':\",./<>?";
+    if (useSpecial) chars += "`~!@#$%^&*()-=_+[]{}|;:/<>?";
     if (useHex) chars += "123456789ABCDEF";
 
     for (let i = 0; i < length; i++) {
@@ -80,33 +121,23 @@ function keyGen(length,useLowerCase = true,useUpperCase = true,useNumbers = true
     return key;
 }
 
-function getKey(strength = null) {
-    switch (strength) {
-        case "letters":
-            return keyGen(10, true, true, false, false, false);
-        case "decent_pw":
-            return keyGen(10, true, true, true, false, false);
-        case "strong":
-            return keyGen(15, true, true, true, true, false);
-        case "knox_password":
-            return keyGen(30, true, true, true, true, false);
-        case "ci":
-            return keyGen(32, true, true, true, false, false);
-        case "type_160":
-            return keyGen(20, true, true, true, true, false);
-        case "type_504":
-            return keyGen(63, true, true, true, true, false);
-        case "type_64":
-            return keyGen(5, false, false, false, false, true);
-        case "type_128":
-            return keyGen(13, false, false, false, false, true);
-        case "type_152":
-            return keyGen(16, false, false, false, false, true);
-        case "type_256":
-            return keyGen(29, false, false, false, false, true);
-        default:
-            return keyGen(8, true, true, true, false, false);
-    }
+function getKey(strength = "default") {
+    const keyOptions = {
+        "default": { length: 8, useLowerCase: true, useUpperCase: true, useNumbers: true, useSpecial: false, useHex: false },
+        "letters": { length: 10, useLowerCase: true, useUpperCase: true, useNumbers: false, useSpecial: false, useHex: false },
+        "decent_pw": { length: 10, useLowerCase: true, useUpperCase: true, useNumbers: true, useSpecial: false, useHex: false },
+        "strong": { length: 15, useLowerCase: true, useUpperCase: true, useNumbers: true, useSpecial: true, useHex: false },
+        "knox_password": { length: 30, useLowerCase: true, useUpperCase: true, useNumbers: true, useSpecial: true, useHex: false },
+        "ci": { length: 32, useLowerCase: true, useUpperCase: true, useNumbers: true, useSpecial: false, useHex: false },
+        "type_160": { length: 20, useLowerCase: true, useUpperCase: true, useNumbers: true, useSpecial: true, useHex: false },
+        "type_504": { length: 63, useLowerCase: true, useUpperCase: true, useNumbers: true, useSpecial: true, useHex: false },
+        "type_64": { length: 5, useLowerCase: false, useUpperCase: false, useNumbers: false, useSpecial: false, useHex: true },
+        "type_128": { length: 13, useLowerCase: false, useUpperCase: false, useNumbers: false, useSpecial: false, useHex: true },
+        "type_152": { length: 16, useLowerCase: false, useUpperCase: false, useNumbers: false, useSpecial: false, useHex: true },
+        "type_256": { length: 29, useLowerCase: false, useUpperCase: false, useNumbers: false, useSpecial: false, useHex: true },
+    };
+
+    return keyGen(keyOptions[strength].length, keyOptions[strength]);
 }
 
 function getQueryStringsFromUrl(url){
@@ -152,6 +183,12 @@ function queryString(name, url = window.location.href) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+/**
+ * Generates the alphabet.
+ *
+ * @param {boolean} capital - specify if the alphabet should be in capital letters, defaults to true
+ * @return {Array} an array of the alphabet characters
+ */
 function generateAlphabet(capital=true){
     return [...Array(26)].map((_, i)=> String.fromCharCode(i + (capital ? 65 : 97)));
 }
@@ -160,6 +197,13 @@ function isFloat(value){
     return (typeof value === 'number' && !Number.isNaN(value) && !Number.isInteger(value)) ? true : false;
 }
 
+/**
+ * Formats a number to a specified precision, or to 2 decimal places by default.
+ *
+ * @param {number} number - The number to be formatted
+ * @param {number} precision - The precision to format the number to, defaults to 2 decimal places
+ * @return {number|null} The formatted number, or null if the input is not a valid number
+ */
 function formatNumber(number, precision=null){
     const decimalPlaces = (Number.isInteger(precision)) ? precision : 2;
 
@@ -172,6 +216,12 @@ function formatNumber(number, precision=null){
     }
 }
 
+/**
+ * Check if the given number is even.
+ *
+ * @param {number} number - The number to be checked
+ * @return {boolean} true if the number is even, false otherwise
+ */
 function isEven(number){
     return number%2 === 0 ? true : false
 }

@@ -114,32 +114,32 @@ function postRequest (event) {
         this_form.find("#hidden_content").val(frames["richedit"].document.body.innerHTML);
     }
 
-    var notFilled = false;
+    // var notFilled = false;
 
-    //We make sure those fields that are required are filled incase the user mistakenly skips any.
-    this_form
-        .find("input")
-        .each(function() {
-            var currentNode = this;
+    // //We make sure those fields that are required are filled incase the user mistakenly skips any.
+    // this_form
+    //     .find("input")
+    //     .each(function() {
+    //         var currentNode = this;
 
-            if (currentNode.data('name') || currentNode.attr("required")) {
-                if (currentNode.val() == "") {
-                    notFilled = true;
+    //         if (currentNode.data('name') || currentNode.attr("required")) {
+    //             if (currentNode.val() == "") {
+    //                 notFilled = true;
 
-                    var name = currentNode.data('name') || currentNode.attr("name");
-                    currentNode.removeClass("is-valid").addClass("is-invalid");
+    //                 var name = currentNode.data('name') || currentNode.attr("name");
+    //                 currentNode.removeClass("is-valid").addClass("is-invalid");
 
-                    responseArea.html(`<span style='color:red;'>You should fill in the ${capitalLetters(name)} field before you proceed</span>`)
+    //                 responseArea.html(`<span style='color:red;'>You should fill in the ${capitalLetters(name)} field before you proceed</span>`)
 
-                    return false;
-                }
-                currentNode.removeClass("is-invalid").addClass("is-valid");
-            }
-        });
+    //                 return false;
+    //             }
+    //             currentNode.removeClass("is-invalid").addClass("is-valid");
+    //         }
+    //     });
 
-    if (notFilled == true) {
-        return false;
-    }
+    // if (notFilled == true) {
+    //     return false;
+    // }
 
     var sub_value = submit_button.val();
 
@@ -308,6 +308,7 @@ function postRequest (event) {
                     responseArea.html(
                         `<span style='color:${cssForServerError}; font-weight:700' class='server-response'>There was a problem in submission. Please try again</span>`);
             }
+            document.dispatchEvent(new CustomEvent('http_error', { detail: error }))
         })
         .then(() => {
             submit_button.val(sub_value);

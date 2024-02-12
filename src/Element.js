@@ -103,6 +103,36 @@ class Element {
       }
     }
 
+    hide(){
+      if(this.create || this.isObject || this.isSingle){
+        this.element.style.display = 'none';
+      }
+      else{
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].style.display = 'none';
+        });
+      }
+      return this;
+    }
+
+    show(){
+      if(this.create || this.isObject || this.isSingle){
+        this.element.style.display = '';
+      }
+      else{
+        this.element.forEach(function (currentValue, currentIndex, listObj) {
+          listObj[currentIndex].style.display = '';
+        });
+      }
+      return this;
+    }
+
+    isHidden(){
+      const status = this.css('display')
+
+      return status && status == 'none' ? true : false
+    }
+
     addClasses(classes){
       if(this.create || this.isObject || this.isSingle){
         this.element.className = classes;
