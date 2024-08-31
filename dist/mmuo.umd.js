@@ -1074,6 +1074,7 @@
           responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(error.response.data.message, "</span>"));
           break;
 
+        case 412:
         case 403:
           var forbidden = (_error$response$data$2 = error.response.data.message) !== null && _error$response$data$2 !== void 0 ? _error$response$data$2 : error.response.data;
           responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(forbidden, "</span>"));
