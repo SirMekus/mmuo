@@ -217,7 +217,12 @@ function postRequest (event) {
             }
             
             this_form.removeElement(".server-response");
-
+            let errorMessage = error.response.data.message ?? 
+                    (
+                        error.response.data?.data?.message
+                        ?? 
+                        error.response.data
+                    )
             switch (error.response.status) {
                 case 422:
                     var items = error.response.data.errors;
@@ -288,20 +293,11 @@ function postRequest (event) {
                     break;
 
                 case 401:
-                    responseArea.html(`<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${error.response.data.message}</span>`);
-
-                    break;
-
                 case 412:
                 case 403:
-                    var forbidden = error.response.data.message ?? error.response.data
-                    responseArea.html(`<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${forbidden}</span>`);
-
-                    break;
-
                 case 404:
                     responseArea.html(
-                        `<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${error.response.data.message ?? error.response.data}</span>`);
+                        `<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${errorMessage}</span>`);
 
                     break;
 

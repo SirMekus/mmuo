@@ -990,13 +990,14 @@ function postRequest(event) {
       responseArea.html("<span style=\"color:".concat(cssForServerSuccess, "; font-weight:700;\">").concat(serverResponse, "</span>"));
     }
   }).catch(function (error) {
-    var _error$response$data$2, _error$response$data$3;
+    var _error$response$data$, _error$response$data$2, _error$response$data, _error$response$data$3;
 
     if (!error || !error.response) {
       return;
     }
 
     this_form.removeElement(".server-response");
+    var errorMessage = (_error$response$data$ = error.response.data.message) !== null && _error$response$data$ !== void 0 ? _error$response$data$ : (_error$response$data$2 = (_error$response$data = error.response.data) === null || _error$response$data === void 0 ? void 0 : (_error$response$data$3 = _error$response$data.data) === null || _error$response$data$3 === void 0 ? void 0 : _error$response$data$3.message) !== null && _error$response$data$2 !== void 0 ? _error$response$data$2 : error.response.data;
 
     switch (error.response.status) {
       case 422:
@@ -1030,11 +1031,11 @@ function postRequest(event) {
             responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(error.response.data.message, "</span>"));
           }
         } else {
-          var _error$response$data, _error$response$data$, _error$response$data2, _error$response$data3, _error$response$data4, _error$response$data5;
+          var _error$response$data2, _error$response$data3, _error$response$data4, _error$response$data5, _error$response$data6, _error$response$data7;
 
-          if ((_error$response$data = error.response.data) !== null && _error$response$data !== void 0 && (_error$response$data$ = _error$response$data.message) !== null && _error$response$data$ !== void 0 && _error$response$data$.message) {
+          if ((_error$response$data2 = error.response.data) !== null && _error$response$data2 !== void 0 && (_error$response$data3 = _error$response$data2.message) !== null && _error$response$data3 !== void 0 && _error$response$data3.message) {
             var msg = error.response.data.message.message;
-          } else if ((_error$response$data2 = error.response.data) !== null && _error$response$data2 !== void 0 && _error$response$data2.message) {
+          } else if ((_error$response$data4 = error.response.data) !== null && _error$response$data4 !== void 0 && _error$response$data4.message) {
             var msg = error.response.data.message;
           } else {
             var msg = error.response.data;
@@ -1042,10 +1043,10 @@ function postRequest(event) {
 
           responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(msg, "</span>"));
 
-          if ((_error$response$data3 = error.response.data) !== null && _error$response$data3 !== void 0 && (_error$response$data4 = _error$response$data3.message) !== null && _error$response$data4 !== void 0 && _error$response$data4.target || (_error$response$data5 = error.response.data) !== null && _error$response$data5 !== void 0 && _error$response$data5.target) {
-            var _error$response$data6;
+          if ((_error$response$data5 = error.response.data) !== null && _error$response$data5 !== void 0 && (_error$response$data6 = _error$response$data5.message) !== null && _error$response$data6 !== void 0 && _error$response$data6.target || (_error$response$data7 = error.response.data) !== null && _error$response$data7 !== void 0 && _error$response$data7.target) {
+            var _error$response$data8;
 
-            var inputName = error.response.data.message.target || ((_error$response$data6 = error.response.data) === null || _error$response$data6 === void 0 ? void 0 : _error$response$data6.target); //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
+            var inputName = error.response.data.message.target || ((_error$response$data8 = error.response.data) === null || _error$response$data8 === void 0 ? void 0 : _error$response$data8.target); //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
 
             if (this_form.find("[name='".concat(inputName, "']")) != null) {
               var sibling = this_form.find("[name='".concat(inputName, "']")).sibling();
@@ -1068,18 +1069,18 @@ function postRequest(event) {
 
         break;
 
-      case 401:
-        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(error.response.data.message, "</span>"));
-        break;
+      case 401: // responseArea.html(`<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${error.response.data.message}</span>`);
+      // break;
 
-      case 412:
-      case 403:
-        var forbidden = (_error$response$data$2 = error.response.data.message) !== null && _error$response$data$2 !== void 0 ? _error$response$data$2 : error.response.data;
-        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(forbidden, "</span>"));
-        break;
+      case 412: // console.log(error.response.data);
+
+      case 403: // var forbidden = error.response.data.message ?? 
+      // error.response.data
+      // responseArea.html(`<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${errorMessage}</span>`);
+      // break;
 
       case 404:
-        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat((_error$response$data$3 = error.response.data.message) !== null && _error$response$data$3 !== void 0 ? _error$response$data$3 : error.response.data, "</span>"));
+        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(errorMessage, "</span>"));
         break;
 
       default:
