@@ -292,6 +292,7 @@ function postRequest (event) {
 
                     break;
 
+                case 412:
                 case 403:
                     var forbidden = error.response.data.message ?? error.response.data
                     responseArea.html(`<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${forbidden}</span>`);
