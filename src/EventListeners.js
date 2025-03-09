@@ -53,8 +53,6 @@ function generatePasswordEvent(){
  * @returns {void}
  */
 function postRequestEvent(config=null){
-    // on("#form .form", "submit", postRequest);
-
     on('#form .form', 'submit', function(event)  {
         event.preventDefault();
         postRequest.call(this, event, config);

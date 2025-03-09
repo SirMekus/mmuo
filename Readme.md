@@ -14,6 +14,7 @@ Especially for AJAX requests, you don't have to create AJAX scripts/files for di
 - [Form Submission Via AJAX](#form-submission-via-ajax)
   - [Returning Response](#returning-response)
   - [Emitting Event](#emitting-event)
+  - [Customizing The Request Journey](#customizing-the-request-journey)
 - [Registering Event Listeners](#registering-event-listeners)
 - [DOM Manipulation](#dom-manipulation)
   - [Available Methods](#available-methods)
@@ -239,7 +240,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
 ## Returning Response
 
-When returning response from server (which should usually come in a JSON format) **Mmuo** will try to detect if it has a **"message"** property and then display it as a successful (or failure) message to the user else it falls to default and just displays whatever was sent to the client. Unless you just send a plain string as response, you should always structure your response. An example is:
+When returning response from your server (which should usually come in a JSON format) **Mmuo** will try to detect if it has a **"message"** property and then display it as a successful (or failure) message to the user else it falls to default and just displays whatever was sent to the client. Unless you just send a plain string as response, you should always structure your response. An example is:
 
 ```json
 {
@@ -271,7 +272,7 @@ Or, if it is a validation message based on some form request (with a **HTTP stat
 {
     "message": {
         "message":"Please enter your email address here",
-        "target":"email" //This refers to the HTML input element that this validation message is meant for (if any). It is completely optional and should have the target's value as the exact input "NAME" attribute
+        "target":"email" //This refers to the HTML input element that this validation message is meant for (if any). It is completely optional but should have the target's value as the exact input "NAME" attribute if at all.
     }
 } 
 ```
@@ -281,11 +282,11 @@ OR
 ```json
 {
     "message":"Please enter your email address here",
-    "target":"email" //This refers to the HTML input form 'NAME' attribute that this validation message is meant for (if any). It is completely optional and should have the target's value as the exact input "NAME" attribute
+    "target":"email" //This refers to the HTML input form 'NAME' attribute that this validation message is meant for (if any). It is completely optional but should have the target's value as the exact input "NAME" attribute if at all
 }
 ```
 
-With the above, the appropriate error message will be displayed right next after the input element it's (message) was meant for (as long as the appropraite **HTTP status code** is set. For form request(s) please use **422** for error response(s) when dealing with form validation).
+With the above, the appropriate error message will be displayed right next after the input element it (message) was meant for (as long as the appropraite **HTTP status code** is set).
 
 ---
 
@@ -361,7 +362,7 @@ For proper message styling and presentation we use the **HTTP status** to detect
 
 ## Emitting Event
 
-After form submission you may want to perform some other actions as well when the request is successful. You can simply do this by adding a `data-bc=*` attribute to either the `form` tag with the name of the event you want to emit as value. We will then emit this event when the request is successful (a **200 HTTP status code** is received) which you can listen to in your project. We'll pass across any data received from the server as parameter in the emitted event as well so you can inspect and do whatever you wish with it. Example:
+After form submission you may want to perform some other actions as well when the request is successful. You can simply do this by adding a `data-bc=*` attribute to either the `form` tag with the name of the event you want to emit as value. We will then emit this event when the request is successful (a **20\* HTTP status code** is received) which you can listen to in your project. We'll pass across any data received from the server as parameter in the emitted event as well so you can inspect and do whatever you wish with it. Example:
 
 ```html
 <form data-bc="myevent" action="/action" class="form" method="get">
@@ -375,6 +376,99 @@ And then listen to it like so:
 document.addEventListener("myevent", (event) => {
     //event => contains the response from server and some other properties which you should inspect to find out
 });
+```
+
+## Customizing The Request Journey
+
+In the course of the request, you may want to customize how the UI appears or behaves when a request is started, successful, or unsuccessful. You can do this by passing in a configuration object to the `postRequest` function. The configuration object should have the following properties:
+
+- `start` - A function to be called before the request starts.
+- `success` - A function to be called if the request is successful.
+- `error` - A function to be called if the request encounters an error.
+- `end` - A function to be called after the request ends.
+
+> Please note that this will override the default behavior of this feature discussed above.
+
+> The example below assumes that your 'form' element has an ID of **formSubmit**. If you have a different ID, then you should change it accordingly.
+
+> NB: Your functions' arguments should expect the element that triggered the event and - for some - the response object from the server like in the example below.
+
+Example:
+
+```javascript
+import { on, element as $, postRequest } from "mmuo";
+
+function start(element) {
+    //Called before the request is started or is in progress.
+}
+
+function success(element, response) {
+    // Called on succesful completion of the request. That is, when it receives a 20* HTTP status code.
+}
+
+function error(element, error) {
+    // Called when an error occurs during the request. That is, when it receives a non-20* HTTP status code.
+}
+
+function end(element) {
+    //called after the entire request is completed. You can use this function for cleaning up (tasks).
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+    let config = {
+        start: start,
+        success:success,
+        error,
+        end
+    }
+    
+    on('#formSubmit', 'submit', function(event)  {
+        event.preventDefault();
+        let config = {
+            start: start,
+            success:success,
+            error,
+            end
+        }
+        
+        postRequest.call(this, event, config);
+    });
+});
+```
+
+If you want to use the `postRequestEvent` function, you should import it like so:
+>NB: This means that your 'form' element must have an ID of **form** since we will be using our default listener for this action.
+
+```javascript
+import { element as $, postRequestEvent } from "mmuo";
+
+function start(element) {
+    //Called before the request is started or is in progress.
+}
+
+function success(element, response) {
+    // Called on succesful completion of the request. That is, when it receives a 20* HTTP status code.
+}
+
+function error(element, error) {
+    // Called when an error occurs during the request. That is, when it receives a non-20* HTTP status code.
+}
+
+function end(element) {
+    //called after the entire request is completed. You can use this function for cleaning up (tasks).
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+    let config = {
+        start: start,
+        success:success,
+        error,
+        end
+    }
+    postRequestEvent(config);
+});
+
+
 ```
 
 ---
