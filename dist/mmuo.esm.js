@@ -165,6 +165,11 @@ var Element = /*#__PURE__*/function () {
   }
 
   _createClass(Element, [{
+    key: "raw",
+    value: function raw() {
+      return this.element;
+    }
+  }, {
     key: "id",
     value: function id(_id) {
       if (this.create || this.isObject || this.isSingle) {
@@ -812,6 +817,190 @@ function isEven(number) {
   return number % 2 === 0 ? true : false;
 }
 
+var Ajaxify = /*#__PURE__*/function () {
+  function Ajaxify(element) {
+    _classCallCheck(this, Ajaxify);
+
+    _defineProperty(this, "element", void 0);
+
+    _defineProperty(this, "submitButton", void 0);
+
+    this.element = element;
+    this.submitButton = element.find("input[type='submit']") || element.find("button[type='submit']");
+  }
+
+  _createClass(Ajaxify, [{
+    key: "createResponseArea",
+    value: function createResponseArea() {
+      if (this.element.find("div.success")) {
+        this.element.find("div.success").remove();
+      }
+
+      element("div").addClass("success").insertBefore(this.submitButton);
+      var responseArea = this.element.find(".success");
+      return responseArea;
+    }
+  }, {
+    key: "startAjax",
+    value: function startAjax() {
+      var submitBtnInitialValue = this.submitButton.val();
+      var progressIndicatorText = this.submitButton.data("mmuoStart") || "...in progress";
+      this.submitButton.val(progressIndicatorText).attr("disabled", "disabled");
+      this.submitButton.attr("data-mmuo-initial", submitBtnInitialValue);
+    }
+  }, {
+    key: "successAjax",
+    value: function successAjax(response) {
+      var _response$data, _response$data$messag, _response$data2;
+
+      var responseArea = this.createResponseArea();
+      var cssForServerSuccess = "#198754";
+      this.element.removeElement(".server-response");
+
+      if (this.element.data("bc")) {
+        document.dispatchEvent(new CustomEvent(this.element.data("bc"), {
+          detail: response
+        }));
+      }
+
+      if ((_response$data = response.data) !== null && _response$data !== void 0 && (_response$data$messag = _response$data.message) !== null && _response$data$messag !== void 0 && _response$data$messag.url || (_response$data2 = response.data) !== null && _response$data2 !== void 0 && _response$data2.url) {
+        var _response$data3, _response$data3$messa, _response$data4;
+
+        var url = ((_response$data3 = response.data) === null || _response$data3 === void 0 ? void 0 : (_response$data3$messa = _response$data3.message) === null || _response$data3$messa === void 0 ? void 0 : _response$data3$messa.url) || ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.url);
+
+        if (this.element.data("ext")) {
+          window.open(url, "_ext");
+        } else {
+          location.href = url;
+        }
+      } else {
+        var _ref, _response$data$messag2;
+
+        var serverResponse = (_ref = response.data.msg || ((_response$data$messag2 = response.data.message) === null || _response$data$messag2 === void 0 ? void 0 : _response$data$messag2.message) || response.data.message) !== null && _ref !== void 0 ? _ref : response.data;
+
+        if (_typeof(serverResponse) == "object") {
+          var _this$submitButton$da;
+
+          serverResponse = (_this$submitButton$da = this.submitButton.data("mSuccess")) !== null && _this$submitButton$da !== void 0 ? _this$submitButton$da : "Operation was successful";
+        }
+
+        responseArea.html("<span style=\"color:".concat(cssForServerSuccess, "; font-weight:700;\">").concat(serverResponse, "</span>"));
+      }
+    }
+  }, {
+    key: "errorAjax",
+    value: function errorAjax(error) {
+      var _ref2, _error$response$data$, _error$response$data, _error$response$data$2;
+
+      if (!error || !error.response) {
+        return;
+      }
+
+      var responseArea = this.createResponseArea();
+      var cssForServerError = "rgb(220, 53, 69)";
+      this.element.removeElement(".server-response");
+      var errorMessage = (_ref2 = (_error$response$data$ = error.response.data.message) !== null && _error$response$data$ !== void 0 ? _error$response$data$ : (_error$response$data = error.response.data) === null || _error$response$data === void 0 ? void 0 : (_error$response$data$2 = _error$response$data.data) === null || _error$response$data$2 === void 0 ? void 0 : _error$response$data$2.message) !== null && _ref2 !== void 0 ? _ref2 : error.response.data;
+
+      switch (error.response.status) {
+        case 422:
+          var items = error.response.data.errors;
+
+          if (items != undefined) {
+            for (var item in items) {
+              //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
+              if (!this.element.find("[name='".concat(item, "']"))) {
+                continue;
+              }
+
+              var sibling = this.element.find("[name='".concat(item, "']")).sibling();
+              var id = "".concat(item, "_mmuo");
+
+              if (!sibling) {
+                //Then we need to create it
+                element("div").id(id).addClass("server-response").css("color", cssForServerError).insertAfter(this.element.find("[name='".concat(item, "']")));
+              } else {
+                if (sibling.attr("id") != id) {
+                  element("div").id(id).addClass("server-response").css("color", cssForServerError).insertAfter(sibling);
+                }
+              }
+
+              this.element.find("#".concat(id)).text(items[item][0]);
+            }
+
+            if (items.length > 1) {
+              responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>Please make sure you fill required fields in the form and try again.</span>"));
+            } else {
+              responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(error.response.data.message, "</span>"));
+            }
+          } else {
+            var _error$response$data2, _error$response$data3, _error$response$data4, _error$response$data5, _error$response$data6, _error$response$data7;
+
+            var msg;
+
+            if ((_error$response$data2 = error.response.data) !== null && _error$response$data2 !== void 0 && (_error$response$data3 = _error$response$data2.message) !== null && _error$response$data3 !== void 0 && _error$response$data3.message) {
+              msg = error.response.data.message.message;
+            } else if ((_error$response$data4 = error.response.data) !== null && _error$response$data4 !== void 0 && _error$response$data4.message) {
+              msg = error.response.data.message;
+            } else {
+              msg = error.response.data;
+            }
+
+            responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(msg, "</span>"));
+
+            if ((_error$response$data5 = error.response.data) !== null && _error$response$data5 !== void 0 && (_error$response$data6 = _error$response$data5.message) !== null && _error$response$data6 !== void 0 && _error$response$data6.target || (_error$response$data7 = error.response.data) !== null && _error$response$data7 !== void 0 && _error$response$data7.target) {
+              var _error$response$data8;
+
+              var inputName = error.response.data.message.target || ((_error$response$data8 = error.response.data) === null || _error$response$data8 === void 0 ? void 0 : _error$response$data8.target); //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
+
+              if (this.element.find("[name='".concat(inputName, "']")) != null) {
+                var _sibling = this.element.find("[name='".concat(inputName, "']")).sibling();
+
+                var _id = "".concat(inputName, "_mmuo");
+
+                if (!_sibling) {
+                  //Then we need to create it
+                  element("div").id(_id).addClass("server-response").css("color", cssForServerError).css("fontWeight", "700").insertAfter(this.element.find("[name='".concat(inputName, "']")));
+                } else {
+                  if (_sibling.attr("id") != _id) {
+                    element("div").id(_id).addClass("server-response").css("color", cssForServerError).css("fontWeight", "700").insertAfter(_sibling);
+                  }
+                }
+
+                this.element.find("#".concat(_id)).html(msg);
+              }
+            }
+          }
+
+          break;
+        // case 401:
+        // case 412:
+        // case 403:
+        // case 404:
+        //     responseArea.html(
+        //         `<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${errorMessage}</span>`);
+        //     break;
+
+        default:
+          responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(errorMessage, "</span>"));
+          break;
+      }
+
+      document.dispatchEvent(new CustomEvent("http_error", {
+        detail: error
+      }));
+    }
+  }, {
+    key: "endAjax",
+    value: function endAjax() {
+      this.submitButton.val(this.submitButton.data("mmuoInitial"));
+      this.submitButton.removeAttr("disabled");
+      this.submitButton.removeAttr("data-mmuo-initial");
+    }
+  }]);
+
+  return Ajaxify;
+}();
+
 function togglePasswordVisibility(event) {
   event.preventDefault();
   var clicked_button = event.currentTarget;
@@ -883,49 +1072,26 @@ function generatePassword(event) {
 }
 
 function postRequest(event) {
-  event.preventDefault();
-  var this_form = element(this, false);
-  var submit_button = this_form.find("input[type='submit']") || this_form.find("button[type='submit']");
+  var _this = this;
 
-  if (this_form.find("div.success")) {
-    this_form.find("div.success").remove();
+  var ajaxConfig = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  event.preventDefault();
+  var thisForm = element(this, false);
+  var ajaxify = new Ajaxify(thisForm);
+  var userAjaxStartFunction = ajaxConfig === null || ajaxConfig === void 0 ? void 0 : ajaxConfig.start;
+  var userAjaxSuccessFunction = ajaxConfig === null || ajaxConfig === void 0 ? void 0 : ajaxConfig.success;
+  var userAjaxErrorFunction = ajaxConfig === null || ajaxConfig === void 0 ? void 0 : ajaxConfig.error;
+  var userAjaxEndFunction = ajaxConfig === null || ajaxConfig === void 0 ? void 0 : ajaxConfig.end;
+
+  if (userAjaxStartFunction) {
+    userAjaxStartFunction.call(this, thisForm.raw());
+  } else {
+    ajaxify.startAjax();
   }
 
-  element("div").addClass('success').insertBefore(submit_button);
-  var responseArea = this_form.find(".success");
-
-  if (this_form.find("#hidden_content")) {
-    this_form.find("#hidden_content").val(frames["richedit"].document.body.innerHTML);
-  } // var notFilled = false;
-  // //We make sure those fields that are required are filled incase the user mistakenly skips any.
-  // this_form
-  //     .find("input")
-  //     .each(function() {
-  //         var currentNode = this;
-  //         if (currentNode.data('name') || currentNode.attr("required")) {
-  //             if (currentNode.val() == "") {
-  //                 notFilled = true;
-  //                 var name = currentNode.data('name') || currentNode.attr("name");
-  //                 currentNode.removeClass("is-valid").addClass("is-invalid");
-  //                 responseArea.html(`<span style='color:red;'>You should fill in the ${capitalLetters(name)} field before you proceed</span>`)
-  //                 return false;
-  //             }
-  //             currentNode.removeClass("is-invalid").addClass("is-valid");
-  //         }
-  //     });
-  // if (notFilled == true) {
-  //     return false;
-  // }
-
-
-  var sub_value = submit_button.val();
-  var action = this_form.attr("action");
-  var method = this_form.attr('method') || 'post';
-  var data_to_send = new FormData(this_form.getDomElement());
-  var progressIndicatorText = submit_button.data('inprogress') || "...in progress";
-  submit_button.val(progressIndicatorText).attr("disabled", "disabled");
-  var cssForServerError = "rgb(220, 53, 69)";
-  var cssForServerSuccess = "#198754";
+  var action = thisForm.attr("action");
+  var method = thisForm.attr('method') || 'post';
+  var dataToSend = new FormData(thisForm.getDomElement());
   var config = {
     url: action,
     method: method,
@@ -940,155 +1106,38 @@ function postRequest(event) {
     case "delete":
     case "post":
       config = _objectSpread2(_objectSpread2({}, config), {}, {
-        data: this_form.data('json') ? JSON.parse(JSON.stringify(Object.fromEntries(data_to_send))) : data_to_send
+        data: thisForm.data('json') ? JSON.parse(JSON.stringify(Object.fromEntries(dataToSend))) : dataToSend
       });
       break;
 
     default:
       config = _objectSpread2(_objectSpread2({}, config), {}, {
-        params: JSON.parse(JSON.stringify(Object.fromEntries(data_to_send)))
+        params: JSON.parse(JSON.stringify(Object.fromEntries(dataToSend)))
       });
   }
 
   axios.request(config).then(function (response) {
-    var _response$data, _response$data$messag, _response$data2;
-
-    //This is how we identify messages from the server so that we can easily remove them and display the latest message from server.
-    this_form.removeElement(".server-response");
-
-    if (this_form.data('bc')) {
-      document.dispatchEvent(new CustomEvent(this_form.data('bc'), {
-        detail: response
-      }));
-    }
-
-    if ((_response$data = response.data) !== null && _response$data !== void 0 && (_response$data$messag = _response$data.message) !== null && _response$data$messag !== void 0 && _response$data$messag.url || (_response$data2 = response.data) !== null && _response$data2 !== void 0 && _response$data2.url) {
-      var _response$data3, _response$data3$messa, _response$data4;
-
-      var url = ((_response$data3 = response.data) === null || _response$data3 === void 0 ? void 0 : (_response$data3$messa = _response$data3.message) === null || _response$data3$messa === void 0 ? void 0 : _response$data3$messa.url) || ((_response$data4 = response.data) === null || _response$data4 === void 0 ? void 0 : _response$data4.url);
-
-      if (this_form.data('ext')) {
-        window.open(url, '_ext');
-      } else {
-        location.href = url;
-      }
+    if (userAjaxSuccessFunction) {
+      userAjaxSuccessFunction.call(_this, thisForm.raw(), response);
     } else {
-      var _ref, _response$data$messag2;
-
-      var serverResponse = (_ref = response.data.msg || ((_response$data$messag2 = response.data.message) === null || _response$data$messag2 === void 0 ? void 0 : _response$data$messag2.message) || response.data.message) !== null && _ref !== void 0 ? _ref : response.data;
-
-      if (_typeof(serverResponse) == 'object') {
-        var _submit_button$data;
-
-        serverResponse = (_submit_button$data = submit_button.data('mSuccess')) !== null && _submit_button$data !== void 0 ? _submit_button$data : "Operation was successful";
-      }
-
-      responseArea.html("<span style=\"color:".concat(cssForServerSuccess, "; font-weight:700;\">").concat(serverResponse, "</span>"));
+      ajaxify.successAjax(response);
     }
   }).catch(function (error) {
-    var _error$response$data$, _error$response$data$2, _error$response$data, _error$response$data$3;
-
     if (!error || !error.response) {
       return;
     }
 
-    this_form.removeElement(".server-response");
-    var errorMessage = (_error$response$data$ = error.response.data.message) !== null && _error$response$data$ !== void 0 ? _error$response$data$ : (_error$response$data$2 = (_error$response$data = error.response.data) === null || _error$response$data === void 0 ? void 0 : (_error$response$data$3 = _error$response$data.data) === null || _error$response$data$3 === void 0 ? void 0 : _error$response$data$3.message) !== null && _error$response$data$2 !== void 0 ? _error$response$data$2 : error.response.data;
-
-    switch (error.response.status) {
-      case 422:
-        var items = error.response.data.errors;
-
-        if (items != undefined) {
-          for (var item in items) {
-            //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
-            if (!this_form.find("[name='".concat(item, "']"))) {
-              continue;
-            }
-
-            var sibling = this_form.find("[name='".concat(item, "']")).sibling();
-            var id = "".concat(item, "_mmuo");
-
-            if (!sibling) {
-              //Then we need to create it
-              element("div").id(id).addClass('server-response').css('color', cssForServerError).insertAfter(this_form.find("[name='".concat(item, "']")));
-            } else {
-              if (sibling.attr('id') != id) {
-                element("div").id(id).addClass('server-response').css('color', cssForServerError).insertAfter(sibling);
-              }
-            }
-
-            this_form.find("#".concat(id)).text(items[item][0]);
-          }
-
-          if (items.length > 1) {
-            responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>Please make sure you fill required fields in the form and try again.</span>"));
-          } else {
-            responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(error.response.data.message, "</span>"));
-          }
-        } else {
-          var _error$response$data2, _error$response$data3, _error$response$data4, _error$response$data5, _error$response$data6, _error$response$data7;
-
-          if ((_error$response$data2 = error.response.data) !== null && _error$response$data2 !== void 0 && (_error$response$data3 = _error$response$data2.message) !== null && _error$response$data3 !== void 0 && _error$response$data3.message) {
-            var msg = error.response.data.message.message;
-          } else if ((_error$response$data4 = error.response.data) !== null && _error$response$data4 !== void 0 && _error$response$data4.message) {
-            var msg = error.response.data.message;
-          } else {
-            var msg = error.response.data;
-          }
-
-          responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(msg, "</span>"));
-
-          if ((_error$response$data5 = error.response.data) !== null && _error$response$data5 !== void 0 && (_error$response$data6 = _error$response$data5.message) !== null && _error$response$data6 !== void 0 && _error$response$data6.target || (_error$response$data7 = error.response.data) !== null && _error$response$data7 !== void 0 && _error$response$data7.target) {
-            var _error$response$data8;
-
-            var inputName = error.response.data.message.target || ((_error$response$data8 = error.response.data) === null || _error$response$data8 === void 0 ? void 0 : _error$response$data8.target); //This may be an element that is dynamically added to the form field, thus may not always be present in the DOM
-
-            if (this_form.find("[name='".concat(inputName, "']")) != null) {
-              var sibling = this_form.find("[name='".concat(inputName, "']")).sibling();
-
-              var _id = "".concat(inputName, "_mmuo");
-
-              if (!sibling) {
-                //Then we need to create it
-                element("div").id(_id).addClass('server-response').css('color', cssForServerError).css('fontWeight', '700').insertAfter(this_form.find("[name='".concat(inputName, "']")));
-              } else {
-                if (sibling.attr('id') != _id) {
-                  element("div").id(_id).addClass('server-response').css('color', cssForServerError).css('fontWeight', '700').insertAfter(sibling);
-                }
-              }
-
-              this_form.find("#".concat(_id)).html(msg);
-            }
-          }
-        }
-
-        break;
-
-      case 401: // responseArea.html(`<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${error.response.data.message}</span>`);
-      // break;
-
-      case 412: // console.log(error.response.data);
-
-      case 403: // var forbidden = error.response.data.message ?? 
-      // error.response.data
-      // responseArea.html(`<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${errorMessage}</span>`);
-      // break;
-
-      case 404:
-        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>").concat(errorMessage, "</span>"));
-        break;
-
-      default:
-        responseArea.html("<span style='color:".concat(cssForServerError, "; font-weight:700' class='server-response'>There was a problem in submission. Please try again</span>"));
+    if (userAjaxErrorFunction) {
+      userAjaxErrorFunction.call(_this, thisForm.raw(), error);
+    } else {
+      ajaxify.errorAjax(error);
     }
-
-    document.dispatchEvent(new CustomEvent('http_error', {
-      detail: error
-    }));
   }).then(function () {
-    submit_button.val(sub_value);
-    submit_button.removeAttr("disabled");
+    if (userAjaxEndFunction) {
+      userAjaxEndFunction.call(_this, thisForm.raw());
+    } else {
+      ajaxify.endAjax();
+    }
   });
 }
 

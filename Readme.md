@@ -213,7 +213,7 @@ You can put as many input elements as you want and they'll be submitted to your 
 
 It is important that your submit button has a `type="submit"` attribute so we can identify the trigger. Also, as much as possible, try to enclose your `input` tag(s) in a `div`.
 
-Also, when request to server is in progress, whatever value the "submit" button has is replaced with a generic **"...in progress"** value (as an indicator) until the request is completed then the original value will be restored. If you would like a different message to be displayed to the user then you should specify it by adding a `data-inProgress` attribute with the value referencing what you want to be displayed.
+Also, when request to server is in progress, whatever value the "submit" button has is replaced with a generic **"...in progress"** value (as an indicator) until the request is completed then the original value will be restored. If you would like a different message to be displayed to the user then you should specify it by adding a `data-mmuo-start` attribute with the value referencing what you want to be displayed.
 
 Alternatively, since the `defaultEventListeners` function registers multiple event listeners at once, you may be interested in just the AJAX functionality of this package. For this reason you can simply inport the function that handles it and call it in your own JS file like so:
 

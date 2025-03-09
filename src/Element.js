@@ -30,6 +30,10 @@ class Element {
 
       return this;
     }
+
+    raw(){
+      return this.element;
+    }
     
     id(id){
       if(this.create || this.isObject || this.isSingle){
