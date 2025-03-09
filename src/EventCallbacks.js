@@ -96,6 +96,17 @@ function generatePassword (event) {
     }
 }
 
+    /**
+     * 
+     * @param {Event} event - The submit event of the form. 
+     * @param {Object} [ajaxConfig=null] - Optional configuration object for the postRequest function.
+     * @param {Function} [ajaxConfig.start] - Function to be called before the postRequest starts.
+     * @param {Function} [ajaxConfig.success] - Function to be called if the postRequest is successful.
+     * @param {Function} [ajaxConfig.error] - Function to be called if the postRequest encounters an error.
+     * @param {Function} [ajaxConfig.end] - Function to be called after the postRequest ends.
+     * 
+     * @returns {void}
+     */
 function postRequest (event, ajaxConfig=null) {
     event.preventDefault();
 

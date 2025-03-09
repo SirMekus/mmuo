@@ -30,6 +30,16 @@ class Ajaxify {
     this.submitButton.attr("data-mmuo-initial", submitBtnInitialValue);
   }
 
+  /**
+   * Handles the successful completion of an AJAX request.
+   * It creates or updates the response area to display a success message.
+   * If a broadcast channel is specified in the form data, it dispatches a custom event.
+   * If the response contains a URL, it navigates to the URL or opens it in a new window/tab.
+   * Otherwise, it displays a server success message in the response area.
+   *
+   * @param {Object} response - The response object from the AJAX request.
+   */
+
   successAjax(response) {
     let responseArea = this.createResponseArea();
 
@@ -67,6 +77,18 @@ class Ajaxify {
     }
   }
 
+  /**
+   * @param {Object} error - The error object from the AJAX request.
+   * @description Handles server errors from the AJAX request.
+   * If the error object is not given, or if the error object does not have a response, the method does nothing.
+   * If the error object is given and has a response object, the method will create a div element with the class name "server-response"
+   * and insert it before the submit button.
+   * The method will then check the status code of the response. 
+   * If the status code is 422, the method will loop through the errors object in the response and create a div element
+   * for each error message with the class name "server-response" and insert it after the relevant form field.
+   * If the status code is not 422, the method will insert the error message in the created div element.
+   * The method will also dispatch an event with the name "http_error" and the detail set to the error object.
+   */
   errorAjax(error) {
     if (!error || !error.response) {
       return;
@@ -176,15 +198,7 @@ class Ajaxify {
           }
         }
         break;
-      // case 401:
-      // case 412:
-      // case 403:
-      // case 404:
-      //     responseArea.html(
-      //         `<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${errorMessage}</span>`);
-
-      //     break;
-
+        
       default:
         responseArea.html(
           `<span style='color:${cssForServerError}; font-weight:700' class='server-response'>${errorMessage}</span>`
@@ -194,6 +208,12 @@ class Ajaxify {
     document.dispatchEvent(new CustomEvent("http_error", { detail: error }));
   }
 
+  /**
+   * Reset the submit button after an AJAX request has ended.
+   * This function is called by the {@link Ajaxify.successAjax} and {@link Ajaxify.errorAjax} functions.
+   * This function resets the submit button to its original state: its `disabled` attribute is removed and its value is reset to the original value, which is stored in the `data-mmuo-initial` attribute.
+   * @returns {void}
+   */
   endAjax() {
     this.submitButton.val(this.submitButton.data("mmuoInitial"));
     this.submitButton.removeAttr("disabled");

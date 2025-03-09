@@ -1181,9 +1181,27 @@ function checkIfPasswordsMatchEvent() {
 function generatePasswordEvent() {
   on(".gen-password", "click", generatePassword);
 }
+/**
+ * Sets up event listeners for form submission and calls the postRequest function.
+ * It also prevents the default form submission behavior and allows for custom configuration.
+ *
+ * @param {Object} [config=null] - Optional configuration object for the postRequest function.
+ * @param {Function} [config.start] - Function to be called before the postRequest starts.
+ * @param {Function} [config.success] - Function to be called if the postRequest is successful.
+ * @param {Function} [config.error] - Function to be called if the postRequest encounters an error.
+ * @param {Function} [config.end] - Function to be called after the postRequest ends.
+ *
+ * @returns {void}
+ */
+
 
 function postRequestEvent() {
-  on("#form .form", "submit", postRequest);
+  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  // on("#form .form", "submit", postRequest);
+  on('#form .form', 'submit', function (event) {
+    event.preventDefault();
+    postRequest.call(this, event, config);
+  });
 }
 
 function defaultEventListeners() {

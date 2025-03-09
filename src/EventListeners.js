@@ -40,9 +40,38 @@ function generatePasswordEvent(){
     on(".gen-password", "click", generatePassword);
 }
 
-function postRequestEvent(){
-    on("#form .form", "submit", postRequest);
+/**
+ * Sets up event listeners for form submission and calls the postRequest function.
+ * It also prevents the default form submission behavior and allows for custom configuration.
+ *
+ * @param {Object} [config=null] - Optional configuration object for the postRequest function.
+ * @param {Function} [config.start] - Function to be called before the postRequest starts.
+ * @param {Function} [config.success] - Function to be called if the postRequest is successful.
+ * @param {Function} [config.error] - Function to be called if the postRequest encounters an error.
+ * @param {Function} [config.end] - Function to be called after the postRequest ends.
+ *
+ * @returns {void}
+ */
+function postRequestEvent(config=null){
+    // on("#form .form", "submit", postRequest);
+
+    on('#form .form', 'submit', function(event)  {
+        event.preventDefault();
+        postRequest.call(this, event, config);
+    });
 }
+
+/**
+ * Initializes default event listeners for various UI elements.
+ *
+ * This function sets up the following event listeners:
+ * - Toggles password visibility when the associated button is clicked.
+ * - Checks if passwords match when focus is lost from the relevant input field.
+ * - Generates a password when the generate button is clicked.
+ * - Intercepts form submission to handle it via AJAX post request.
+ *
+ * @returns {void}
+ */
 
 function defaultEventListeners() {
 
