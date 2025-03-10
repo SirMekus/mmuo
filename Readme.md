@@ -387,9 +387,9 @@ In the course of the request, you may want to customize how the UI appears or be
 - `error` - A function to be called if the request encounters an error.
 - `end` - A function to be called after the request ends.
 
-> Please note that this will override the default behavior of this feature discussed above.
+> Please note that this will override the default behavior of this AJAX feature already discussed above.
 
-> The example below assumes that your 'form' element has an ID of **formSubmit**. If you have a different ID, then you should change it accordingly.
+> The example below assumes that your 'form' element has an ID of **'formSubmit'**. If you have a different ID, then you should change it accordingly.
 
 > NB: Your functions' arguments should expect the element that triggered the event and - for some - the response object from the server like in the example below.
 
@@ -415,13 +415,6 @@ function end(element) {
 }
 
 window.addEventListener("DOMContentLoaded", function () {
-    let config = {
-        start: start,
-        success:success,
-        error,
-        end
-    }
-    
     on('#formSubmit', 'submit', function(event)  {
         event.preventDefault();
         let config = {
@@ -436,8 +429,8 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 ```
 
-If you want to use the `postRequestEvent` function, you should import it like so:
->NB: This means that your 'form' element must have an ID of **form** since we will be using our default listener for this action.
+If you prefer to use the `postRequestEvent` function, you should import it like so:
+>NB: This means that your 'form' element must have an ID of **'form'** since we will be using our default listener for this action.
 
 ```javascript
 import { element as $, postRequestEvent } from "mmuo";
@@ -490,9 +483,10 @@ window.addEventListener("DOMContentLoaded", function() {
 });
 ```
 
-You can register a single event on multiple selectors or elements by separating each selector or element with spacing. E.g,
+You can register a single event on multiple selectors/elements by separating each selector/element with space(s). E.g,
 
 ```javascript
+import {on} from "mmuo"
 window.addEventListener("DOMContentLoaded", function() {
     on('.selectorOne', 'click', myFunctionOrYourFunctionToRun);
 
@@ -507,6 +501,7 @@ window.addEventListener("DOMContentLoaded", function() {
 or
 
 ```javascript
+import {on} from "mmuo"
 window.addEventListener("DOMContentLoaded", function() {
     on('.selectorOne #selector2', 'click', myFunctionOrYourFunctionToRun);
 });
@@ -515,6 +510,7 @@ window.addEventListener("DOMContentLoaded", function() {
 or
 
 ```javascript
+import {on} from "mmuo"
 window.addEventListener("DOMContentLoaded", function() {
     on('.selectorOne #selector2', 'click', function(event){
         //Do whatever you wish
@@ -525,6 +521,7 @@ window.addEventListener("DOMContentLoaded", function() {
 or
 
 ```javascript
+import {on} from "mmuo"
 window.addEventListener("DOMContentLoaded", function() {
     on('.selectorOne .selector2', 'click', function(event){
         //Do whatever you wish

@@ -24,12 +24,6 @@ function capitalLetters(inputString = '') {
     }
 }
 
-// function capitalLetters(s=null) {
-//     if(s){
-//         return s.trim().split(" ").map((i) => i[0].toUpperCase() + i.substr(1)).reduce((ac, i) => `${ac} ${i}`);
-//     }
-// }
-
 /**
  * Lazy loads images using IntersectionObserver and setInterval.
  *
